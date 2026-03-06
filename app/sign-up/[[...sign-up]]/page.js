@@ -10,8 +10,21 @@ export default function SignUpPage() {
           appearance={{
             elements: {
               rootBox: 'mx-auto',
-              card: 'bg-slate-900/80 backdrop-blur border border-slate-700 shadow-2xl',
-            }
+              card: 'shadow-2xl',
+              headerTitle: 'text-white',
+              headerSubtitle: 'text-slate-300',
+              socialButtonsBlockButton: 'bg-white hover:bg-gray-100 text-gray-900 border border-gray-300',
+              formButtonPrimary: 'bg-purple-600 hover:bg-purple-700',
+              footerActionLink: 'text-purple-400 hover:text-purple-300',
+              formFieldLabel: 'text-white',
+              formFieldInput: 'bg-slate-800 border-slate-600 text-white',
+              identityPreviewText: 'text-white',
+              identityPreviewEditButton: 'text-purple-400',
+            },
+            layout: {
+              socialButtonsPlacement: 'top',
+              socialButtonsVariant: 'blockButton',
+            },
           }}
         />
       </div>

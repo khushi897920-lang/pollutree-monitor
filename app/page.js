@@ -54,10 +54,10 @@ export default function Home() {
         <div className="text-center mb-16">
           <Activity className="w-20 h-20 mx-auto mb-6 text-blue-400" />
           <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
-            Delhi AQI Monitoring
+            Smart City AQI Monitoring
           </h1>
           <p className="text-2xl text-slate-300 max-w-3xl mx-auto">
-            Real-time hyperlocal air quality monitoring with AI-powered health insights for Delhi
+            Real-time hyperlocal air quality monitoring with AI-powered health insights for any city
           </p>
         </div>
 
@@ -70,12 +70,12 @@ export default function Home() {
               <Users className="w-20 h-20 mx-auto mb-6 text-blue-400 group-hover:scale-110 transition-transform" />
               <h2 className="text-3xl font-bold mb-3 text-white">Citizen Dashboard</h2>
               <p className="text-slate-400 mb-8 text-lg">
-                View real-time AQI, AI health advisories, and interactive Delhi maps
+                View real-time AQI, AI health advisories, and interactive city maps
               </p>
               <div className="space-y-2 text-sm text-slate-300 text-left">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-green-400" />
-                  <span>Live AQI readings for all Delhi localities</span>
+                  <span>Live AQI readings for all city localities</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Brain className="w-4 h-4 text-purple-400" />
@@ -136,8 +136,8 @@ export default function Home() {
           </div>
           <div className="p-6 bg-slate-900/30 backdrop-blur rounded-xl border border-slate-800">
             <div className="text-4xl font-bold text-purple-400 mb-2">Ward-level</div>
-            <div className="text-slate-400">Delhi Monitoring</div>
-            <p className="text-xs text-slate-500 mt-2">5 localities covered</p>
+            <div className="text-slate-400">City Monitoring</div>
+            <p className="text-xs text-slate-500 mt-2">Configurable localities</p>
           </div>
         </div>
 
