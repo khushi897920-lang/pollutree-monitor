@@ -151,11 +151,11 @@ Expected response:
 
 | Ward ID | Ward Name | Coordinates | Sample AQI |
 |---------|-----------|-------------|------------|
-| 1 | Cantt | 25.3176, 82.9739 | 155 (Unhealthy) |
-| 2 | Dashashwamedh | 25.3095, 83.0107 | 240 (Hazardous) |
-| 3 | Assi Ghat | 25.2820, 83.0105 | 85 (Moderate) |
-| 4 | Lanka | 25.2677, 82.9913 | 120 (USG) |
-| 5 | Sigra | 25.3176, 82.9913 | 46 (Good) |
+| 1 | Connaught Place | 28.6315, 77.2167 | 205 (Very Unhealthy) |
+| 2 | Rohini | 28.7496, 77.0669 | 174 (Unhealthy) |
+| 3 | Dwarka | 28.5921, 77.0460 | 166 (Unhealthy for Sensitive) |
+| 4 | Mayur Vihar | 28.6077, 77.2987 | 152 (Unhealthy for Sensitive) |
+| 5 | Nehru Place | 28.5494, 77.2501 | 220 (Very Unhealthy) |
 
 ---
 
