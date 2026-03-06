@@ -26,13 +26,13 @@ const Popup = dynamic(
   { ssr: false }
 );
 
-// Ward locations (Varanasi example)
+// Ward locations (Delhi)
 const WARD_LOCATIONS = {
-  1: { name: 'Cantt', lat: 25.3176, lng: 82.9739 },
-  2: { name: 'Dashashwamedh', lat: 25.3095, lng: 83.0107 },
-  3: { name: 'Assi Ghat', lat: 25.2820, lng: 83.0105 },
-  4: { name: 'Lanka', lat: 25.2677, lng: 82.9913 },
-  5: { name: 'Sigra', lat: 25.3176, lng: 82.9913 },
+  1: { name: 'Connaught Place', lat: 28.6315, lng: 77.2167 },
+  2: { name: 'Rohini', lat: 28.7496, lng: 77.0669 },
+  3: { name: 'Dwarka', lat: 28.5921, lng: 77.0460 },
+  4: { name: 'Mayur Vihar', lat: 28.6077, lng: 77.2987 },
+  5: { name: 'Nehru Place', lat: 28.5494, lng: 77.2501 },
 };
 
 export default function AQIMap({ readings = [] }) {
@@ -62,8 +62,8 @@ export default function AQIMap({ readings = [] }) {
     );
   }
 
-  // Center of Varanasi
-  const center = [25.3176, 82.9739];
+  // Center of Delhi
+  const center = [28.6139, 77.2090];
 
   return (
     <div className="w-full h-full rounded-lg overflow-hidden relative">
