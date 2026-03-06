@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,8 @@ import {
   Wind,
   Loader2,
   Activity,
-  MapPin
+  MapPin,
+  User
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { calculateAQI, getAQICategory } from '@/lib/aqiCalculator';
@@ -21,6 +23,8 @@ import { calculateAQI, getAQICategory } from '@/lib/aqiCalculator';
 const AQIMap = dynamic(() => import('@/components/AQIMap'), { ssr: false });
 
 export default function AdminDashboard() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
   const [readings, setReadings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alerts, setAlerts] = useState([]);
@@ -54,17 +58,40 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchData();
+    if (isLoaded && isSignedIn) {
+      fetchData();
 
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchData, 30000);
-    return () => clearInterval(interval);
-  }, []);
+      // Auto-refresh every 30 seconds
+      const interval = setInterval(fetchData, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isLoaded, isSignedIn]);
 
   const handleMitigation = (wardId, action) => {
     alert(`Mitigation action "${action}" dispatched to Ward ${wardId}`);
     // In production, this would call an API to trigger mitigation actions
   };
+
+  // Show loading while auth is being checked
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 flex items-center justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-purple-500" />
+      </div>
+    );
+  }
+
+  // If not signed in, this should be handled by middleware
+  // But as a safety check:
+  if (!isSignedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 flex items-center justify-center">
+        <Card className="p-8 bg-slate-900/50 backdrop-blur border-slate-800">
+          <p className="text-white">Redirecting to sign in...</p>
+        </Card>
+      </div>
+    );
+  }
 
   const totalWards = readings.length;
   const alertCount = alerts.length;
@@ -84,14 +111,23 @@ export default function AdminDashboard() {
               </h1>
               <p className="text-sm text-slate-400 mt-1">Smart City AQI Monitoring System</p>
             </div>
-            <Button
-              onClick={fetchData}
-              variant="outline"
-              className="border-slate-700 hover:bg-slate-800"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh Data
-            </Button>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-sm text-slate-400">Logged in as</p>
+                <p className="font-semibold flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  {user?.firstName || user?.emailAddresses[0]?.emailAddress}
+                </p>
+              </div>
+              <Button
+                onClick={fetchData}
+                variant="outline"
+                className="border-slate-700 hover:bg-slate-800"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh Data
+              </Button>
+            </div>
           </div>
         </div>
       </header>
