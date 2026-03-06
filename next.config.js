@@ -6,6 +6,15 @@ const nextConfig = {
   experimental: {
     // Remove if not using Server Components
     serverComponentsExternalPackages: ['mongodb'],
+    serverActions: {
+      allowedOrigins: [
+        'localhost:3000',
+        'pollutree-monitor.preview.emergentagent.com',
+        'pollutree-monitor.cluster-0.preview.emergentcf.cloud',
+        '*.emergentagent.com',
+        '*.emergentcf.cloud',
+      ],
+    },
   },
   webpack(config, { dev }) {
     if (dev) {
