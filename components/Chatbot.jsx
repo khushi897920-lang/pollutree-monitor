@@ -29,7 +29,7 @@ export default function Chatbot({ wardId = null }) {
       const response = await fetch('/api/qna', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: userMessage, ward_id: wardId }),
+        body: JSON.stringify({ question: userMessage, wardId }),
       });
 
       const data = await response.json();
@@ -59,77 +59,76 @@ export default function Chatbot({ wardId = null }) {
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 rounded-full w-14 h-14 shadow-lg bg-blue-600 hover:bg-blue-700"
+          className="fixed bottom-6 right-6 rounded-full w-14 h-14 shadow-[0_0_15px_rgba(0,255,255,0.1)] bg-[#0d1520]/80 hover:bg-[#111c2a]/90 border border-cyan-500/30 backdrop-blur-md transition-all duration-300"
           size="icon"
         >
-          <MessageCircle className="w-6 h-6" />
+          <MessageCircle className="w-6 h-6 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]" />
         </Button>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <Card className="fixed bottom-6 right-6 w-96 h-[500px] shadow-2xl border border-slate-700 bg-slate-900/95 backdrop-blur flex flex-col">
+        <Card className="glass-panel fixed bottom-6 right-6 w-96 h-[500px] flex flex-col rounded-xl overflow-hidden text-white border-0 z-50">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800/50">
+          <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5 backdrop-blur">
             <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-blue-500" />
-              <h3 className="font-semibold text-white">AQI Assistant</h3>
+              <MessageCircle className="w-5 h-5 text-neon-cyan" />
+              <h3 className="font-semibold text-white tracking-wider">AQI Assistant</h3>
             </div>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
-              className="hover:bg-slate-700"
+              className="text-white hover:bg-white/10 hover:text-red-400"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </Button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-white/20">
             {messages.map((message, index) => (
               <div
                 key={index}
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg p-3 ${
-                    message.role === 'user'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-800 text-slate-100 border border-slate-700'
-                  }`}
+                  className={`max-w-[80%] rounded-xl p-3 shadow-lg ${message.role === 'user'
+                    ? 'bg-teal-500/30 border border-teal-500/50 text-white'
+                    : 'bg-black/40 border border-white/10 text-gray-200'
+                    }`}
                 >
-                  <p className="text-sm">{message.content}</p>
+                  <p className="text-sm font-light leading-relaxed">{message.content}</p>
                 </div>
               </div>
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-3">
-                  <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                <div className="bg-black/40 border border-white/10 rounded-xl p-3 shadow-lg">
+                  <Loader2 className="w-5 h-5 animate-spin text-neon-cyan" />
                 </div>
               </div>
             )}
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-slate-700 bg-slate-800/50">
+          <div className="p-4 border-t border-white/10 bg-black/20">
             <div className="flex gap-2">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask about air quality..."
-                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-400"
+                className="bg-black/40 border-white/10 text-white placeholder:text-gray-500 rounded-lg focus-visible:ring-teal-500/50"
                 disabled={isLoading}
               />
               <Button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
                 size="icon"
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-teal-500/20 hover:bg-teal-500/40 border border-teal-500/50 rounded-lg"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4 text-teal-400" />
               </Button>
             </div>
           </div>

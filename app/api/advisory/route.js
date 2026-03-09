@@ -5,18 +5,15 @@ import { generateHealthAdvisory } from '@/lib/gemini';
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const ward_id = searchParams.get('ward_id');
+    const ward_name = searchParams.get('ward_name');
 
     // Fetch the latest AQI reading
+    // No longer filtering by ward_name in the query since Supabase is using ward_id natively
     let query = supabase
       .from('aqi_readings')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(1);
-
-    if (ward_id) {
-      query = query.eq('ward_id', parseInt(ward_id));
-    }
 
     const { data, error } = await query;
 
@@ -35,16 +32,36 @@ export async function GET(request) {
       );
     }
 
-    const latestReading = data[0];
+    const rawReading = data[0];
+
+    // Delhi Map Wards mapping standard (Demo)
+    const wardMapping = {
+      1: 'Anand Vihar',
+      2: 'Connaught Place',
+      3: 'Lodhi Road',
+      4: 'Dwarka Sector 8',
+      5: 'R.K. Puram'
+    };
+
+    const uiReading = {
+      id: rawReading.id,
+      created_at: rawReading.created_at,
+      ward_id: rawReading.ward_id,
+      ward_name: rawReading.ward_name || wardMapping[rawReading.ward_id] || `Ward ${rawReading.ward_id}`,
+      pm25: rawReading.pm25 !== undefined ? rawReading.pm25 : rawReading.pm25_level,
+      pm10: rawReading.pm10 !== undefined ? rawReading.pm10 : rawReading.pm10_level,
+      gas_level: rawReading.gas_level,
+      aqi_score: rawReading.aqi_score
+    };
 
     // Generate health advisory using Gemini
-    const advisory = await generateHealthAdvisory(latestReading);
+    const advisory = await generateHealthAdvisory(uiReading);
 
     return NextResponse.json(
       {
         success: true,
         advisory,
-        aqiData: latestReading,
+        aqiData: uiReading,
       },
       { status: 200 }
     );

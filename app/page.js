@@ -12,7 +12,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950 text-white">
-      {/* Header */}
       <header className="border-b border-slate-800/50 backdrop-blur-sm bg-slate-900/30">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -35,7 +34,7 @@ export default function Home() {
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <Button 
+                <Button
                   onClick={() => router.push('/admin')}
                   className="bg-purple-600 hover:bg-purple-700"
                 >
@@ -48,8 +47,6 @@ export default function Home() {
           </div>
         </div>
       </header>
-
-      {/* Hero Section */}
       <div className="container mx-auto px-6 py-16">
         <div className="text-center mb-16">
           <Activity className="w-20 h-20 mx-auto mb-6 text-blue-400" />
@@ -60,12 +57,9 @@ export default function Home() {
             Real-time hyperlocal air quality monitoring with AI-powered health insights for any city
           </p>
         </div>
-
-        {/* Dashboard Cards */}
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
-          {/* Citizen Dashboard */}
           <Card className="bg-slate-900/50 backdrop-blur border-slate-800 shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 cursor-pointer group"
-                onClick={() => router.push('/citizen')}>
+            onClick={() => router.push('/citizen')}>
             <div className="p-10 text-center">
               <Users className="w-20 h-20 mx-auto mb-6 text-blue-400 group-hover:scale-110 transition-transform" />
               <h2 className="text-3xl font-bold mb-3 text-white">Citizen Dashboard</h2>
@@ -91,10 +85,8 @@ export default function Home() {
               </Button>
             </div>
           </Card>
-
-          {/* Admin Dashboard */}
           <Card className="bg-slate-900/50 backdrop-blur border-slate-800 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group"
-                onClick={() => isSignedIn ? router.push('/admin') : router.push('/sign-in')}>
+            onClick={() => isSignedIn ? router.push('/admin') : router.push('/sign-in')}>
             <div className="p-10 text-center">
               <Shield className="w-20 h-20 mx-auto mb-6 text-purple-400 group-hover:scale-110 transition-transform" />
               <h2 className="text-3xl font-bold mb-3 text-white">Admin Panel</h2>
@@ -121,13 +113,11 @@ export default function Home() {
             </div>
           </Card>
         </div>
-
-        {/* Features Grid */}
         <div className="grid grid-cols-3 gap-8 text-center">
           <div className="p-6 bg-slate-900/30 backdrop-blur rounded-xl border border-slate-800">
             <div className="text-4xl font-bold text-blue-400 mb-2">Real-time</div>
             <div className="text-slate-400">ESP32 Sensor Data</div>
-            <p className="text-xs text-slate-500 mt-2">Automatic updates every 30s</p>
+            <p className="text-xs text-slate-500 mt-2">Live Environmental Metrics</p>
           </div>
           <div className="p-6 bg-slate-900/30 backdrop-blur rounded-xl border border-slate-800">
             <div className="text-4xl font-bold text-green-400 mb-2">AI-Powered</div>
@@ -140,8 +130,6 @@ export default function Home() {
             <p className="text-xs text-slate-500 mt-2">Configurable localities</p>
           </div>
         </div>
-
-        {/* API Info */}
         <div className="mt-16 text-center">
           <Card className="max-w-3xl mx-auto bg-slate-900/50 backdrop-blur border-slate-800">
             <div className="p-8">
