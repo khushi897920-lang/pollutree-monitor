@@ -57,6 +57,7 @@ venv/
 .venv/
 
 # Development tools
+sensor-simulator.js
 chainlit.md
 .chainlit
 .ipynb_checkpoints/
