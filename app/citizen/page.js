@@ -36,11 +36,11 @@ export default function CitizenDashboard() {
         }
 
         const newAlerts = data.latestByWard
-          .filter(reading => (reading.aqi_score || calculateAQI(reading.pm25 || reading.pm25_level || 0)) > 100)
+          .filter(reading => (reading.aqi || 0) > 100)
           .map(reading => ({
             ward_name: reading.ward_name,
-            aqi: reading.aqi_score || calculateAQI(reading.pm25 || reading.pm25_level || 0),
-            category: getAQICategory(reading.pm25 || reading.pm25_level || 0),
+            aqi: reading.aqi || 0,
+            category: getAQICategory(reading.aqi || 0),
             timestamp: reading.created_at,
           }))
           .sort((a, b) => b.aqi - a.aqi);
@@ -77,8 +77,8 @@ export default function CitizenDashboard() {
   const pm25Val = latestReading?.pm25 ?? latestReading?.pm25_level ?? 0;
   const pm10Val = latestReading?.pm10 ?? latestReading?.pm10_level ?? 0;
   const gasVal = latestReading?.gas_level ?? 0;
-  const aqi = latestReading ? (latestReading.aqi_score ?? calculateAQI(pm25Val)) : 0;
-  const aqiCategory = latestReading ? getAQICategory(pm25Val) : { category: 'Unknown', color: 'gray' };
+  const aqi = latestReading ? (latestReading.aqi || 0) : 0;
+  const aqiCategory = latestReading ? getAQICategory(aqi) : { category: 'Unknown', color: '#6b7280' };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
