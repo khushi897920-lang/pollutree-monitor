@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { generateHealthAdvisory } from '@/lib/gemini';
 
+export const maxDuration = 60;
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
