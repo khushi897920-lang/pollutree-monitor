@@ -1,6 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { chatbotResponse } from '@/lib/gemini';
+
+export const maxDuration = 60;
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -35,7 +38,6 @@ export async function POST(req) {
     const latest = data[0];
 
     // 2️⃣ Get answer using helper
-    const { chatbotResponse } = await import('@/lib/gemini');
     const answer = await chatbotResponse(question, latest);
 
     return NextResponse.json({
@@ -48,7 +50,7 @@ export async function POST(req) {
 
     return NextResponse.json({
       success: false,
-      answer: "AI failed to respond"
+      answer: `AI failed to respond: ${error.message || "Unknown error"}`
     });
   }
 }
