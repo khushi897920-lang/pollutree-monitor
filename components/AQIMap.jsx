@@ -130,9 +130,9 @@ export default function AQIMap({ readings = [], historicalReadings = [] }) {
           const ward = WARD_LOCATIONS[reading.ward_name];
           if (!ward) return null;
 
-          const aqi = reading.aqi_score || calculateAQI(reading.pm25);
-          const aqiCategory = getAQICategory(reading.pm25);
-          const markerColor = getMarkerColor(reading.pm25);
+          const aqi = reading.aqi || 0;
+          const aqiCategory = getAQICategory(aqi);
+          const markerColor = getMarkerColor(aqi);
 
           // Create custom neon colored marker
           const L = require('leaflet');

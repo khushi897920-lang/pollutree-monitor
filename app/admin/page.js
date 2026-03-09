@@ -47,15 +47,15 @@ export default function AdminDashboard() {
         setHistoricalReadings(data.readings);
 
         const newAlerts = data.latestByWard
-          .filter(reading => (reading.aqi_score || calculateAQI(reading.pm25 || reading.pm25_level || 0)) > 100)
+          .filter(reading => (reading.aqi || 0) > 100)
           .map(reading => ({
             ward_id: reading.ward_id,
             ward_name: reading.ward_name,
-            aqi: reading.aqi_score || calculateAQI(reading.pm25 || reading.pm25_level || 0),
-            category: getAQICategory(reading.pm25 || reading.pm25_level || 0),
+            aqi: reading.aqi || 0,
+            category: getAQICategory(reading.aqi || 0),
             timestamp: reading.created_at,
-            pm25: reading.pm25 || reading.pm25_level || 0,
-            pm10: reading.pm10 || reading.pm10_level || 0,
+            pm25: reading.pm25 || 0,
+            pm10: reading.pm10 || 0,
             gas_level: reading.gas_level || 0,
           }))
           .sort((a, b) => b.aqi - a.aqi);
@@ -100,26 +100,20 @@ export default function AdminDashboard() {
   const totalWards = readings.length;
   const avgAQI = readings.length > 0
     ? Math.round(
-      readings.reduce((sum, r) => {
-        const v = r.aqi_score || calculateAQI(r.pm25 || r.pm25_level || 0);
-        return sum + (Number.isNaN(v) ? 0 : v);
-      }, 0) / readings.length
+      readings.reduce((sum, r) => sum + (r.aqi || 0), 0) / readings.length
     )
     : 0;
 
   // Most polluted and safest ward
-  const sortedByAQI = [...readings].map(r => ({
-    ...r,
-    aqi: r.aqi_score || calculateAQI(r.pm25 || r.pm25_level || 0),
-  })).sort((a, b) => b.aqi - a.aqi);
+  const sortedByAQI = [...readings].map(r => ({ ...r, aqi: r.aqi || 0 })).sort((a, b) => b.aqi - a.aqi);
   const mostPolluted = sortedByAQI[0];
   const safestWard = sortedByAQI[sortedByAQI.length - 1];
 
   // AI Source Detection — use the most polluted ward's readings
   const aiSource = mostPolluted
     ? detectPollutionSource(
-      mostPolluted.pm25 || mostPolluted.pm25_level || 0,
-      mostPolluted.pm10 || mostPolluted.pm10_level || 0,
+      mostPolluted.pm25 || 0,
+      mostPolluted.pm10 || 0,
       mostPolluted.gas_level || 0
     )
     : null;
@@ -278,8 +272,8 @@ export default function AdminDashboard() {
                               const pm25 = reading.pm25 || reading.pm25_level || 0;
                               const pm10 = reading.pm10 || reading.pm10_level || 0;
                               const gas = reading.gas_level || 0;
-                              const aqiVal = reading.aqi_score || calculateAQI(pm25);
-                              const cat = getAQICategory(pm25);
+                              const aqiVal = reading.aqi || 0;
+                              const cat = getAQICategory(aqiVal);
                               return (
                                 <tr key={reading.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
                                   <td className="py-2.5 px-3 font-medium text-white text-sm">{reading.ward_name}</td>
@@ -307,13 +301,14 @@ export default function AdminDashboard() {
                     <div className="md:hidden space-y-3 max-h-[280px] overflow-y-auto">
                       {readings.map((reading) => {
                         const pm25 = reading.pm25 || reading.pm25_level || 0;
-                        const cat = getAQICategory(pm25);
+                        const aqiVal = reading.aqi || 0;
+                        const cat = getAQICategory(aqiVal);
                         return (
                           <div key={reading.id} className="bg-black/30 border border-white/10 rounded-xl p-4 space-y-3">
                             <div className="flex justify-between items-center border-b border-white/10 pb-2">
                               <span className="font-semibold text-white">{reading.ward_name}</span>
                               <span className="font-bold text-sm" style={{ color: cat.color }}>
-                                AQI: {reading.aqi_score || calculateAQI(pm25)}
+                                AQI: {reading.aqi || 0}
                               </span>
                             </div>
                             <div className="grid grid-cols-3 gap-2 text-sm">

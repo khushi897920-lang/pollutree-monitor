@@ -18,7 +18,14 @@ export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) return NextResponse.next();
 
   if (isAdminRoute(req)) {
-    await auth.protect();
+    // In @clerk/nextjs v5+, `auth` is a function — call it to get the session.
+    // Calling `auth.protect()` directly is NOT valid and crashes the Edge runtime.
+    const { userId } = await auth();
+    if (!userId) {
+      const signInUrl = new URL('/sign-in', req.url);
+      signInUrl.searchParams.set('redirect_url', req.url);
+      return NextResponse.redirect(signInUrl);
+    }
   }
 
   return NextResponse.next();

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// Delhi wards only — no hardware yet, using simulated local data
 const WARD_NAME_TO_ID = {
   'anand vihar': 1,
   'connaught place': 2,
@@ -8,14 +9,6 @@ const WARD_NAME_TO_ID = {
   'dwarka sector 8': 4,
   'r.k. puram': 5,
   'rk puram': 5,
-  'dashashwamedh': 6,
-  'cantt': 7,
-  'lanka': 8,
-  'sarnath': 9,
-  'assi': 10,
-  'bhelupur': 11,
-  'sigra': 12,
-  'orderly bazar': 13,
 };
 
 function resolveWardId(ward_id, ward_name) {
