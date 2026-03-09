@@ -1,56 +1,54 @@
-import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
-import { chatbotResponse } from '@/lib/gemini';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
 
-export async function POST(request) {
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+export async function POST(req) {
   try {
-    const body = await request.json();
-    const { question, ward_id } = body;
+    const { question } = await req.json();
 
     if (!question) {
-      return NextResponse.json(
-        { error: 'Question is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: false,
+        answer: "No question provided"
+      });
     }
 
-    // Fetch latest AQI readings for context
-    let query = supabase
-      .from('aqi_readings')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10);
+    // 1️⃣ Fetch latest AQI reading
+    const { data, error } = await supabase
+      .from("aqi_readings")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(1);
 
-    if (ward_id) {
-      query = query.eq('ward_id', parseInt(ward_id));
+    if (error || !data || data.length === 0) {
+      return NextResponse.json({
+        success: false,
+        answer: "AQI data unavailable"
+      });
     }
 
-    const { data, error } = await query;
+    const latest = data[0];
 
-    if (error) {
-      console.error('Supabase Query Error:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch AQI context', details: error.message },
-        { status: 500 }
-      );
-    }
+    // 2️⃣ Get answer using helper
+    const { chatbotResponse } = await import('@/lib/gemini');
+    const answer = await chatbotResponse(question, latest);
 
-    // Generate chatbot response with AQI context
-    const answer = await chatbotResponse(question, data || []);
+    return NextResponse.json({
+      success: true,
+      answer
+    });
 
-    return NextResponse.json(
-      {
-        success: true,
-        question,
-        answer,
-      },
-      { status: 200 }
-    );
   } catch (error) {
-    console.error('QnA API Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate response', details: error.message },
-      { status: 500 }
-    );
+    console.error("QNA ERROR:", error);
+
+    return NextResponse.json({
+      success: false,
+      answer: "AI failed to respond"
+    });
   }
 }

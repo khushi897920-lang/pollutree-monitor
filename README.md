@@ -1,329 +1,209 @@
-# Smart City Hyperlocal AQI Monitoring System
+# Pollutree Monitor — Smart City AQI Dashboard
 
-🌆 Real-time ward-level air quality monitoring platform with AI-powered health advisories.
+Real-time, ward-level air quality monitoring with AI-powered health advisories and an admin control panel.
 
-## 🚀 Features
+## Features
 
-### Citizen Dashboard (`/citizen`)
-- Real-time AQI visualization
-- PM2.5, PM10, and Gas level monitoring  
-- AI-powered health advisory (Gemini 2.0 Flash)
+**Citizen Dashboard** (`/citizen`)
+- Live AQI, PM2.5, PM10, and Gas readings
 - Interactive Leaflet map with color-coded ward markers
+- AI health advisory powered by Gemini 2.0 Flash
 - Floating AI chatbot for AQI queries
+- Manual refresh (no auto-refresh)
 
-### Admin Dashboard (`/admin`)
-- Live city-wide AQI monitoring map
-- Pollution alerts for wards exceeding safe levels
-- Mitigation control panel (water sprinklers, traffic control)
-- Real-time statistics and analytics
-- Alert-based action dispatching
+**Admin Dashboard** (`/admin`)
+- City-wide AQI map with all ward markers
+- AI pollution source detection with contribution breakdown (Traffic, Road Dust, Biomass, Industrial, Construction)
+- Live sensor monitoring table with scrollable history
+- Pollution alerts panel + mitigation quick actions (sprinklers, traffic control)
+- Most polluted / safest ward stats
 
-### API Endpoints
+## Tech Stack
 
-#### 1. Sensor Data Ingestion
+| Layer | Tech |
+|---|---|
+| Frontend | Next.js 14, React, Tailwind CSS, shadcn/ui |
+| Backend | Next.js API Routes |
+| Database | Supabase (PostgreSQL) |
+| AI | Google Gemini 2.0 Flash |
+| Auth | Clerk |
+| Maps | Leaflet.js + React Leaflet |
+| Deployment | Vercel |
+
+## Local Setup
+
+### 1. Install dependencies
 ```bash
-POST /api/sensor
-Content-Type: application/json
-
-{
-  "ward_id": 1,
-  "pm25": 155.5,
-  "pm10": 230.2,
-  "gas": 450.0
-}
+npm install
 ```
 
-#### 2. Fetch AQI Readings
-```bash
-GET /api/readings?limit=50&ward_id=1
-```
-
-#### 3. AI Health Advisory
-```bash
-GET /api/advisory?ward_id=1
-```
-
-#### 4. Chatbot Q&A
-```bash
-POST /api/qna
-Content-Type: application/json
-
-{
-  "question": "What precautions should I take today?",
-  "ward_id": 1
-}
-```
-
-## 🛠️ Tech Stack
-
-- **Frontend:** Next.js 14 (App Router), React, Tailwind CSS, shadcn/ui
-- **Backend:** Next.js API Routes (Node.js)
-- **Database:** Supabase (PostgreSQL)
-- **AI:** Google Gemini 2.0 Flash
-- **Maps:** Leaflet.js + React Leaflet
-- **Deployment:** Vercel
-
-## 📦 Installation
-
-### 1. Clone & Install Dependencies
-
-```bash
-cd /app
-yarn install
-```
-
-### 2. Environment Setup
-
-The `.env` file is already configured with:
-
+### 2. Environment variables
+Create `.env.local` in the project root:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://mxxxbeuremwtebvenjem.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
-GEMINI_API_KEY=AIzaSyD...
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+GEMINI_API_KEY=your_gemini_key
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/admin
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/admin
+CLERK_TRUST_HOST=true
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+DB_NAME=your_database_name
+CORS_ORIGINS=*
 ```
 
-### 3. Database Setup
-
-Follow the instructions in `SUPABASE_SETUP.md` to:
-1. Create the `aqi_readings` table
-2. Insert sample data
-3. Set up indexes
-
-**Quick Setup SQL:**
-
+### 3. Database setup
+Run in Supabase SQL editor:
 ```sql
 CREATE TABLE aqi_readings (
-  id BIGSERIAL PRIMARY KEY,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  ward_id INTEGER NOT NULL,
-  pm25_level NUMERIC NOT NULL,
-  pm10_level NUMERIC NOT NULL,
-  gas_level NUMERIC NOT NULL
+  id          BIGSERIAL PRIMARY KEY,
+  created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  ward_id     INTEGER NOT NULL,
+  ward_name   TEXT,
+  pm25_level  NUMERIC NOT NULL,
+  pm10_level  NUMERIC,
+  gas_level   NUMERIC,
+  aqi_score   NUMERIC
 );
 
-CREATE INDEX idx_aqi_readings_ward_id ON aqi_readings(ward_id);
-CREATE INDEX idx_aqi_readings_created_at ON aqi_readings(created_at DESC);
-
--- Insert test data
-INSERT INTO aqi_readings (ward_id, pm25_level, pm10_level, gas_level) VALUES
-(1, 155.5, 230.2, 450.0),
-(2, 240.8, 310.5, 680.0),
-(3, 85.2, 120.5, 220.0),
-(4, 120.3, 180.7, 340.0),
-(5, 45.6, 68.2, 150.0);
+CREATE INDEX idx_aqi_ward    ON aqi_readings(ward_id);
+CREATE INDEX idx_aqi_created ON aqi_readings(created_at DESC);
 ```
 
-### 4. Run Development Server
-
+### 4. Run dev server
 ```bash
-yarn dev
+npm run dev
 ```
 
-Access:
-- **Home:** http://localhost:3000
-- **Citizen Dashboard:** http://localhost:3000/citizen
-- **Admin Dashboard:** http://localhost:3000/admin
+| Page | URL |
+|---|---|
+| Home | http://localhost:3000 |
+| Citizen | http://localhost:3000/citizen |
+| Admin | http://localhost:3000/admin |
 
-## 🌐 Ward Locations
+## API Reference
 
-Example wards (Varanasi):
+### POST `/api/sensor` — Ingest sensor data
+```json
+{
+  "ward_id": 1,
+  "ward_name": "Anand Vihar",
+  "pm25_level": 155.5,
+  "pm10_level": 230.2,
+  "gas_level": 12.4,
+  "aqi_score": 210
+}
+```
+Accepts both `ward_id` (integer) or `ward_name` (string — auto-resolved to ID).
 
-| Ward ID | Name | Coordinates |
-|---------|------|-------------|
-| 1 | Cantt | 25.3176, 82.9739 |
-| 2 | Dashashwamedh | 25.3095, 83.0107 |
-| 3 | Assi Ghat | 25.2820, 83.0105 |
-| 4 | Lanka | 25.2677, 82.9913 |
-| 5 | Sigra | 25.3176, 82.9913 |
+### GET `/api/readings?limit=100` — Fetch latest readings
+### GET `/api/advisory` — AI health advisory
+### POST `/api/qna` — Chatbot query
+```json
+{ "question": "Should I go for a walk today?" }
+```
 
-## 🎨 AQI Color Coding
+## Ward ID Mapping
 
-| AQI Range | Category | Color | Marker |
-|-----------|----------|-------|--------|
-| 0-50 | Good | Green | 🟢 |
-| 51-100 | Moderate | Yellow | 🟡 |
-| 101-150 | Unhealthy for Sensitive | Orange | 🟠 |
-| 151-200 | Unhealthy | Red | 🔴 |
-| 201-300 | Very Unhealthy | Purple | 🟣 |
-| 300+ | Hazardous | Maroon | 🟤 |
+| ID | Ward |
+|---|---|
+| 1 | Anand Vihar |
+| 2 | Connaught Place |
+| 3 | Lodhi Road |
+| 4 | Dwarka Sector 8 |
+| 5 | R.K. Puram |
+| 6 | Dashashwamedh |
+| 7 | Cantt |
+| 8 | Lanka |
+| 9 | Sarnath |
 
-## 🤖 ESP32 Integration
+## AQI Color Scale
 
-### Arduino/ESP32 Code Example
+| Range | Category | Color |
+|---|---|---|
+| 0–50 | Good | 🟢 Green |
+| 51–100 | Moderate | 🟡 Yellow |
+| 101–150 | Unhealthy for Sensitive Groups | 🟠 Orange |
+| 151–200 | Unhealthy | 🔴 Red |
+| 201–300 | Very Unhealthy | 🟣 Purple |
+| 300+ | Hazardous | 🟤 Maroon |
+
+## ESP32 Hardware Integration
 
 ```cpp
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
+const char* ssid      = "YOUR_WIFI_SSID";
+const char* password  = "YOUR_WIFI_PASSWORD";
 const char* serverUrl = "https://your-app.vercel.app/api/sensor";
-
-void setup() {
-  Serial.begin(115200);
-  WiFi.begin(ssid, password);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-  }
-  Serial.println("Connected to WiFi");
-}
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     http.begin(serverUrl);
     http.addHeader("Content-Type", "application/json");
-    
-    // Read sensor values
-    float pm25 = readPM25Sensor();
-    float pm10 = readPM10Sensor();
-    float gas = readGasSensor();
-    
-    // Create JSON payload
-    String jsonPayload = "{";
-    jsonPayload += "\"ward_id\":1,";
-    jsonPayload += "\"pm25\":" + String(pm25) + ",";
-    jsonPayload += "\"pm10\":" + String(pm10) + ",";
-    jsonPayload += "\"gas\":" + String(gas);
-    jsonPayload += "}";
-    
-    int httpResponseCode = http.POST(jsonPayload);
-    
-    if (httpResponseCode > 0) {
-      String response = http.getString();
-      Serial.println(httpResponseCode);
-      Serial.println(response);
-    }
-    
+
+    String payload = "{";
+    payload += "\"ward_id\":1,";
+    payload += "\"ward_name\":\"Anand Vihar\",";
+    payload += "\"pm25_level\":" + String(readPM25()) + ",";
+    payload += "\"pm10_level\":" + String(readPM10()) + ",";
+    payload += "\"gas_level\":"  + String(readGas());
+    payload += "}";
+
+    http.POST(payload);
     http.end();
   }
-  
-  delay(60000); // Send data every 60 seconds
+  delay(60000);
 }
 ```
 
-## 🚀 Deployment
-
-### Deploy to Vercel
+## Deployment (Vercel)
 
 1. Push code to GitHub
-2. Import project in Vercel
-3. Add environment variables:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `GEMINI_API_KEY`
-4. Deploy!
+2. Import repo in [vercel.com](https://vercel.com)
+3. Add all environment variables in **Settings → Environment Variables**
+4. Deploy
 
-### Environment Variables
+> **Note:** Do not commit `.env.local` — it is already in `.gitignore`.
 
-Make sure to add all required environment variables in Vercel Dashboard → Settings → Environment Variables.
-
-## 📊 Database Schema
-
-```sql
-aqi_readings
-├── id (bigint, primary key)
-├── created_at (timestamp with timezone)
-├── ward_id (integer)
-├── pm25_level (numeric)
-├── pm10_level (numeric)
-└── gas_level (numeric)
-```
-
-## 🧪 Testing APIs
-
-### Test Sensor Ingestion
-
-```bash
-curl -X POST http://localhost:3000/api/sensor \
-  -H "Content-Type: application/json" \
-  -d '{
-    "ward_id": 1,
-    "pm25": 155.5,
-    "pm10": 230.2,
-    "gas": 450.0
-  }'
-```
-
-### Test Health Advisory
-
-```bash
-curl http://localhost:3000/api/advisory
-```
-
-### Test Chatbot
-
-```bash
-curl -X POST http://localhost:3000/api/qna \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "Should I go for a morning walk today?"
-  }'
-```
-
-## 📝 Project Structure
+## Project Structure
 
 ```
-/app
 ├── app/
 │   ├── api/
-│   │   ├── sensor/route.js        # ESP32 data ingestion
-│   │   ├── readings/route.js      # Fetch AQI readings
-│   │   ├── advisory/route.js      # AI health advisory
-│   │   └── qna/route.js           # Chatbot endpoint
-│   ├── citizen/page.js            # Citizen dashboard
-│   ├── admin/page.js              # Admin dashboard
-│   ├── page.js                    # Landing page
-│   ├── layout.js                  # Root layout
-│   └── globals.css                # Global styles
+│   │   ├── sensor/       # Sensor data ingestion
+│   │   ├── readings/     # Fetch AQI data
+│   │   ├── advisory/     # AI health advisory
+│   │   └── qna/          # Chatbot endpoint
+│   ├── citizen/          # Citizen dashboard
+│   ├── admin/            # Admin dashboard
+│   └── page.js           # Landing page
 ├── components/
-│   ├── AQIMap.jsx                 # Leaflet map component
-│   ├── Chatbot.jsx                # Floating chatbot
-│   └── ui/                        # shadcn/ui components
+│   ├── AQIMap.jsx
+│   ├── AQITrendChart.jsx
+│   └── Chatbot.jsx
 ├── lib/
-│   ├── supabase.js                # Supabase client
-│   ├── gemini.js                  # Gemini AI integration
-│   └── aqiCalculator.js           # AQI calculation utilities
-└── package.json
+│   ├── supabase.js
+│   ├── aqiCalculator.js
+│   └── pollutionDetector.js
+└── middleware.js
 ```
 
-## 🎯 Key Features
+## Troubleshooting
 
-✅ Real-time sensor data ingestion from ESP32  
-✅ Supabase PostgreSQL storage  
-✅ Ward-level AQI visualization on interactive maps  
-✅ Color-coded markers (Green/Yellow/Orange/Red)  
-✅ AI health advisories using Gemini 2.0 Flash  
-✅ Floating chatbot for citizen queries  
-✅ Admin alert system for high pollution wards  
-✅ Mitigation control panel  
-✅ Dark glassmorphism UI  
-✅ Fully responsive design  
-✅ Auto-refresh every 30 seconds  
+**Map not loading** — Verify dynamic import of AQIMap with `{ ssr: false }`
 
-## 🔧 Troubleshooting
+**Gemini errors** — Check `GEMINI_API_KEY` and model quota at [aistudio.google.com](https://aistudio.google.com)
 
-### Map Not Loading
-- Ensure Leaflet CSS is loaded in `layout.js`
-- Check browser console for errors
-- Verify dynamic import of Leaflet components
+**Sensor 500 error** — Ward name not in `WARD_NAME_TO_ID` map in `app/api/sensor/route.js` — add it
 
-### Gemini API Errors
-- Verify `GEMINI_API_KEY` is correct
-- Check API quota limits
-- Ensure model name is `gemini-2.0-flash-exp`
-
-### Supabase Connection Issues
-- Verify URL and anon key
-- Check table exists and has data
-- Review Supabase logs in dashboard
-
-## 📄 License
-
-MIT License - Built for Smart City Initiative
+**Admin redirect loop** — Ensure Clerk keys are correctly set and `CLERK_TRUST_HOST=true`
 
 ---
 
-**Built with ❤️ using Next.js, Supabase, and Gemini AI**
+Built with Next.js · Supabase · Gemini AI · Clerk · Leaflet

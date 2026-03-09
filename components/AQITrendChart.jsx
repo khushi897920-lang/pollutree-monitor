@@ -14,12 +14,12 @@ export default function AQITrendChart({ data = [] }) {
 
   // Format data for chart
   const chartData = data.map((reading) => ({
-    time: new Date(reading.created_at).toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    time: new Date(reading.created_at).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
     }),
-    pm25: parseFloat(reading.pm25_level),
-    pm10: parseFloat(reading.pm10_level),
+    pm25: parseFloat(reading.pm25),
+    pm10: parseFloat(reading.pm10),
     gas: parseFloat(reading.gas_level) / 10, // Scale down for better visualization
   }));
 
@@ -30,48 +30,48 @@ export default function AQITrendChart({ data = [] }) {
         <AreaChart data={chartData}>
           <defs>
             <linearGradient id="colorPm25" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="colorPm10" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-          <XAxis 
-            dataKey="time" 
-            stroke="#94a3b8" 
+          <XAxis
+            dataKey="time"
+            stroke="#94a3b8"
             fontSize={12}
             tickLine={false}
           />
-          <YAxis 
-            stroke="#94a3b8" 
+          <YAxis
+            stroke="#94a3b8"
             fontSize={12}
             tickLine={false}
             label={{ value: 'µg/m³', angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
           />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#1e293b', 
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#1e293b',
               border: '1px solid #475569',
               borderRadius: '8px',
               color: '#f1f5f9'
             }}
           />
-          <Area 
-            type="monotone" 
-            dataKey="pm25" 
-            stroke="#3b82f6" 
-            fillOpacity={1} 
+          <Area
+            type="monotone"
+            dataKey="pm25"
+            stroke="#3b82f6"
+            fillOpacity={1}
             fill="url(#colorPm25)"
             name="PM2.5"
           />
-          <Area 
-            type="monotone" 
-            dataKey="pm10" 
-            stroke="#10b981" 
-            fillOpacity={1} 
+          <Area
+            type="monotone"
+            dataKey="pm10"
+            stroke="#10b981"
+            fillOpacity={1}
             fill="url(#colorPm10)"
             name="PM10"
           />

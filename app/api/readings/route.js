@@ -5,7 +5,7 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit')) || 50;
-    const ward_id = searchParams.get('ward_id');
+    const ward_name = searchParams.get('ward_name'); // Keep optional filter from UI
 
     let query = supabase
       .from('aqi_readings')
@@ -13,10 +13,8 @@ export async function GET(request) {
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (ward_id) {
-      query = query.eq('ward_id', parseInt(ward_id));
-    }
-
+    // If we wanted to filter by ward_name, we'd have to find the matching ID, 
+    // but for now let's just fetch all and transform them.
     const { data, error } = await query;
 
     if (error) {
@@ -27,19 +25,39 @@ export async function GET(request) {
       );
     }
 
-    // Group by ward_id and get the latest reading for each ward
+    // Delhi Map Wards mapping standard (Demo)
+    const wardMapping = {
+      1: 'Anand Vihar',
+      2: 'Connaught Place',
+      3: 'Lodhi Road',
+      4: 'Dwarka Sector 8',
+      5: 'R.K. Puram'
+    };
+
+    const transformedData = data.map(raw => ({
+      id: raw.id,
+      created_at: raw.created_at,
+      ward_id: raw.ward_id,
+      ward_name: raw.ward_name || wardMapping[raw.ward_id] || `Ward ${raw.ward_id}`,
+      pm25: raw.pm25 !== undefined ? raw.pm25 : raw.pm25_level,
+      pm10: raw.pm10 !== undefined ? raw.pm10 : raw.pm10_level,
+      gas_level: raw.gas_level,
+      aqi_score: raw.aqi_score
+    })).filter(r => r.pm25 !== undefined); // Remove invalid rows
+
+    // Group by ward_name and get the latest reading for each ward
     const latestByWard = {};
-    data.forEach((reading) => {
-      if (!latestByWard[reading.ward_id] || 
-          new Date(reading.created_at) > new Date(latestByWard[reading.ward_id].created_at)) {
-        latestByWard[reading.ward_id] = reading;
+    transformedData.forEach((reading) => {
+      if (!latestByWard[reading.ward_name] ||
+        new Date(reading.created_at) > new Date(latestByWard[reading.ward_name].created_at)) {
+        latestByWard[reading.ward_name] = reading;
       }
     });
 
     return NextResponse.json(
       {
         success: true,
-        readings: data,
+        readings: transformedData,
         latestByWard: Object.values(latestByWard),
       },
       { status: 200 }
