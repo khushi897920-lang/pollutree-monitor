@@ -57,6 +57,9 @@ venv/
 .venv/
 
 # Development tools
+test-*.js
+test-*.cjs
+test-*.mjs
 sensor-simulator.js
 chainlit.md
 .chainlit

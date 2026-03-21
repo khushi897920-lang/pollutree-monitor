@@ -59,10 +59,16 @@ export default function Home() {
         </div>
         
         <div className="w-full bg-slate-900 border-y border-slate-800 py-2 mb-16 overflow-hidden">
-          <marquee className="text-gray-300 font-mono text-sm tracking-widest">
-            🔴 LIVE | Delhi AQI Monitor Active | Powered by ESP32 + Gemini AI
-          </marquee>
+          <div className="flex whitespace-nowrap animate-marquee">
+            <span className="text-gray-300 font-mono text-sm tracking-widest mr-16">
+              🔴 LIVE | Delhi AQI Monitor Active | Powered by ESP32 + Gemini AI
+            </span>
+            <span className="text-gray-300 font-mono text-sm tracking-widest mr-16">
+              🔴 LIVE | Delhi AQI Monitor Active | Powered by ESP32 + Gemini AI
+            </span>
+          </div>
         </div>
+
 
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
           <Card className="bg-slate-900/50 backdrop-blur border-slate-800 shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 cursor-pointer group"

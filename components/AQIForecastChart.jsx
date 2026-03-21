@@ -80,7 +80,7 @@ export default function AQIForecastChart() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
               <XAxis dataKey="time" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} domain={[0, 500]} />
+              <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} domain={[0, Math.max(300, ...data.map(d => d.aqi || 0))]} />
               <Tooltip
                 contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
                 itemStyle={{ color: '#fff' }}

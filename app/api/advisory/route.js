@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { generateHealthAdvisory } from '@/lib/gemini';
 
 export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
 
 // In-memory cache: avoid calling Gemini on every request
 let advisoryCache = null;
@@ -38,11 +39,22 @@ export async function GET(request) {
       return NextResponse.json({ success: true, ...advisoryCache }, { status: 200 });
     }
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('aqi_readings')
       .select('*')
       .order('aqi_score', { ascending: false })
       .limit(1);
+
+    // Fallback if the Supabase schema cache hasn't updated for the aqi_score column
+    if (error && error.message?.includes('aqi_score')) {
+      const fallback = await supabase
+        .from('aqi_readings')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1);
+      data = fallback.data;
+      error = fallback.error;
+    }
 
     if (error) {
       console.error('Supabase Query Error:', error);
@@ -71,10 +83,10 @@ export async function GET(request) {
       aqi_score: rawReading.aqi_score
     };
 
-    // Try AI with 8s timeout, fall back to rule-based if too slow
+    // Try AI with 15s timeout, fall back to rule-based if too slow
     let timeoutId;
     const timeout = new Promise((_, reject) => {
-      timeoutId = setTimeout(() => reject(new Error('timeout')), 8000);
+      timeoutId = setTimeout(() => reject(new Error('timeout')), 15000);
     });
     // Prevent unhandled promise rejection if race resolves first
     timeout.catch(() => {});
