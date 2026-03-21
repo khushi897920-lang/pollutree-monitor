@@ -26,6 +26,16 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
+    const sensorToken = req.headers.get('x-sensor-token');
+    const validToken = process.env.SENSOR_SECRET_TOKEN;
+
+    if (validToken && sensorToken !== validToken) {
+      return NextResponse.json(
+        { error: 'Invalid sensor token' },
+        { status: 401 }
+      );
+    }
+
     const raw_ward_id = body.ward_id;
     const ward_name = body.ward_name;
     const pm25 = body.pm25_level ?? body.pm25;

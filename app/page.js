@@ -36,7 +36,7 @@ export default function Home() {
               <div className="flex items-center gap-4">
                 <Button
                   onClick={() => router.push('/admin')}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-gradient-to-r from-orange-500 to-red-500 border-0 text-white"
                 >
                   <Shield className="w-4 h-4 mr-2" />
                   Admin Panel
@@ -57,6 +57,13 @@ export default function Home() {
             Real-time hyperlocal air quality monitoring with AI-powered health insights for any city
           </p>
         </div>
+        
+        <div className="w-full bg-slate-900 border-y border-slate-800 py-2 mb-16 overflow-hidden">
+          <marquee className="text-gray-300 font-mono text-sm tracking-widest">
+            🔴 LIVE | Delhi AQI Monitor Active | Powered by ESP32 + Gemini AI
+          </marquee>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
           <Card className="bg-slate-900/50 backdrop-blur border-slate-800 shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 cursor-pointer group"
             onClick={() => router.push('/citizen')}>
@@ -114,20 +121,20 @@ export default function Home() {
           </Card>
         </div>
         <div className="grid grid-cols-3 gap-8 text-center">
-          <div className="p-6 bg-slate-900/30 backdrop-blur rounded-xl border border-slate-800">
+          <div className="p-6 bg-slate-800/50 backdrop-blur rounded-xl border border-slate-800 border-t-2 border-t-cyan-400">
             <div className="text-4xl font-bold text-blue-400 mb-2">Real-time</div>
             <div className="text-slate-400">ESP32 Sensor Data</div>
-            <p className="text-xs text-slate-500 mt-2">Live Environmental Metrics</p>
+            <p className="text-xs text-gray-300 mt-2">Live Environmental Metrics</p>
           </div>
-          <div className="p-6 bg-slate-900/30 backdrop-blur rounded-xl border border-slate-800">
+          <div className="p-6 bg-slate-800/50 backdrop-blur rounded-xl border border-slate-800 border-t-2 border-t-green-400">
             <div className="text-4xl font-bold text-green-400 mb-2">AI-Powered</div>
             <div className="text-slate-400">Health Advisories</div>
-            <p className="text-xs text-slate-500 mt-2">Google Gemini 2.5 Flash</p>
+            <p className="text-xs text-gray-300 mt-2">Google Gemini 2.5 Flash</p>
           </div>
-          <div className="p-6 bg-slate-900/30 backdrop-blur rounded-xl border border-slate-800">
+          <div className="p-6 bg-slate-800/50 backdrop-blur rounded-xl border border-slate-800 border-t-2 border-t-purple-400">
             <div className="text-4xl font-bold text-purple-400 mb-2">Ward-level</div>
             <div className="text-slate-400">City Monitoring</div>
-            <p className="text-xs text-slate-500 mt-2">Configurable localities</p>
+            <p className="text-xs text-gray-300 mt-2">Configurable localities</p>
           </div>
         </div>
         <div className="mt-16 text-center">

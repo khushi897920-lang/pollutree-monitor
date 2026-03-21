@@ -10,6 +10,15 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
+const sanitizeInput = (input) => {
+  if (!input || typeof input !== 'string') 
+    return '';
+  return input
+    .slice(0, 500)
+    .replace(/[<>]/g, '')
+    .trim();
+};
+
 export async function POST(req) {
   try {
     const { question } = await req.json();
@@ -38,7 +47,8 @@ export async function POST(req) {
     const latest = data[0];
 
     // 2️⃣ Get answer using helper
-    const answer = await chatbotResponse(question, latest);
+    const cleanQuestion = sanitizeInput(question);
+    const answer = await chatbotResponse(cleanQuestion, latest);
 
     return NextResponse.json({
       success: true,

@@ -41,7 +41,7 @@ export async function GET(request) {
     const { data, error } = await supabase
       .from('aqi_readings')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('aqi_score', { ascending: false })
       .limit(1);
 
     if (error) {
@@ -72,15 +72,20 @@ export async function GET(request) {
     };
 
     // Try AI with 8s timeout, fall back to rule-based if too slow
-    const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('timeout')), 8000)
-    );
+    let timeoutId;
+    const timeout = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error('timeout')), 8000);
+    });
+    // Prevent unhandled promise rejection if race resolves first
+    timeout.catch(() => {});
 
     let advisory;
     try {
       advisory = await Promise.race([generateHealthAdvisory(uiReading), timeout]);
     } catch {
       advisory = getFallbackAdvisory(uiReading.aqi_score);
+    } finally {
+      clearTimeout(timeoutId);
     }
 
     // Cache the result

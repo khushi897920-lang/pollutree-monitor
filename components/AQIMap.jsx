@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { MapPin, Loader2 } from 'lucide-react';
 import { calculateAQI, getMarkerColor, getAQICategory } from '@/lib/aqiCalculator';
@@ -49,6 +49,43 @@ const WARD_LOCATIONS = {
 export default function AQIMap({ readings = [], historicalReadings = [] }) {
   const [isClient, setIsClient] = useState(false);
   const [customIcon, setCustomIcon] = useState(null);
+  const [showHeatmap, setShowHeatmap] = useState(false);
+  const heatCirclesRef = useRef([]);
+
+  const HeatmapEffect = () => {
+    const map = useMap();
+    useEffect(() => {
+      if (typeof window === 'undefined') return;
+      const L = require('leaflet');
+      
+      if (heatCirclesRef.current.length > 0) {
+        heatCirclesRef.current.forEach(c => {
+          if (map.hasLayer(c)) map.removeLayer(c);
+        });
+        heatCirclesRef.current = [];
+      }
+
+      if (showHeatmap) {
+        readings.forEach(reading => {
+          const wardKey = Object.keys(WARD_LOCATIONS).find(
+            key => key.toLowerCase() === (reading.ward_name || '').toLowerCase().trim()
+          );
+          const ward = wardKey ? WARD_LOCATIONS[wardKey] : null;
+          if (ward) {
+            const aqi = reading.aqi || 0;
+            const circle = L.circle([ward.lat, ward.lng], {
+              radius: aqi * 15,
+              color: getMarkerColor(aqi),
+              fillOpacity: 0.3,
+              opacity: 0
+            }).addTo(map);
+            heatCirclesRef.current.push(circle);
+          }
+        });
+      }
+    }, [showHeatmap, readings, map]);
+    return null;
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -80,6 +117,12 @@ export default function AQIMap({ readings = [], historicalReadings = [] }) {
 
   return (
     <div className="w-full h-full rounded-lg overflow-hidden relative">
+      <button 
+        onClick={() => setShowHeatmap(!showHeatmap)}
+        className={`absolute top-4 right-4 z-[400] px-4 py-2 rounded-md font-bold text-sm shadow-md transition-colors ${showHeatmap ? 'bg-red-600 text-white' : 'bg-slate-800 text-gray-300'}`}
+      >
+        {showHeatmap ? 'Heatmap ON' : 'Heatmap OFF'}
+      </button>
       <style jsx global>{`
         .leaflet-container {
           width: 100%;
@@ -119,7 +162,10 @@ export default function AQIMap({ readings = [], historicalReadings = [] }) {
         zoom={13}
         scrollWheelZoom={true}
         style={{ height: '100%', width: '100%' }}
+        role="img"
+        aria-label="Interactive map displaying AQI readings across city wards"
       >
+        <HeatmapEffect />
         <MapLegend />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -127,7 +173,11 @@ export default function AQIMap({ readings = [], historicalReadings = [] }) {
         />
 
         {readings.map((reading) => {
-          const ward = WARD_LOCATIONS[reading.ward_name];
+          const wardKey = Object.keys(WARD_LOCATIONS).find(
+            key => key.toLowerCase() === 
+            (reading.ward_name || '').toLowerCase().trim()
+          );
+          const ward = wardKey ? WARD_LOCATIONS[wardKey] : null;
           if (!ward) return null;
 
           const aqi = reading.aqi || 0;

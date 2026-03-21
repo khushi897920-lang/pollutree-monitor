@@ -68,6 +68,14 @@ export async function POST(request) {
 // Get mitigation actions
 export async function GET(request) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' }, 
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const ward_id = searchParams.get('ward_id');
     const limit = parseInt(searchParams.get('limit')) || 50;
@@ -92,10 +100,11 @@ export async function GET(request) {
       );
     }
 
+    const safeActions = data.map(({ triggered_by, ...rest }) => rest);
     return NextResponse.json(
       {
         success: true,
-        actions: data,
+        actions: safeActions,
         count: data.length,
       },
       { status: 200 }

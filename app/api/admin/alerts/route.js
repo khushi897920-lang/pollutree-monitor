@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/supabase';
 import { calculateAQI } from '@/lib/aqiCalculator';
 
 // Get pollution alerts
 export async function GET(request) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' }, 
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const acknowledged = searchParams.get('acknowledged');
     const limit = parseInt(searchParams.get('limit')) || 50;
@@ -46,6 +55,14 @@ export async function GET(request) {
 // Create alert from current AQI readings
 export async function POST(request) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' }, 
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { ward_id, aqi_level, alert_type, message } = body;
 

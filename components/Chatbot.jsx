@@ -57,18 +57,23 @@ export default function Chatbot({ wardId = null }) {
     <>
       {/* Floating Chat Button */}
       {!isOpen && (
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 rounded-full w-14 h-14 shadow-[0_0_15px_rgba(0,255,255,0.1)] bg-[#0d1520]/80 hover:bg-[#111c2a]/90 border border-cyan-500/30 backdrop-blur-md transition-all duration-300"
-          size="icon"
-        >
-          <MessageCircle className="w-6 h-6 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]" />
-        </Button>
+        <div className="fixed bottom-6 right-6 z-50">
+          <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full animate-bounce absolute -top-8 right-0 whitespace-nowrap">
+            Ask AI ✨
+          </span>
+          <Button
+            onClick={() => setIsOpen(true)}
+            className="rounded-full w-14 h-14 bg-gradient-to-r from-purple-600 to-cyan-500 shadow-lg hover:opacity-90 transition-all duration-300 border-0"
+            size="icon"
+          >
+            <MessageCircle className="w-6 h-6 text-white drop-shadow-md" />
+          </Button>
+        </div>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <Card className="glass-panel fixed bottom-6 right-6 w-96 h-[500px] flex flex-col rounded-xl overflow-hidden text-white border-0 z-50">
+        <Card className="fixed bottom-6 right-6 w-[380px] h-[480px] flex flex-col rounded-2xl overflow-hidden text-white bg-slate-900 border border-slate-700 shadow-2xl z-50" aria-label="AQI Assistant Chatbot">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5 backdrop-blur">
             <div className="flex items-center gap-2">
@@ -86,7 +91,7 @@ export default function Chatbot({ wardId = null }) {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-white/20">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-white/20" role="log" aria-live="polite">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -127,6 +132,7 @@ export default function Chatbot({ wardId = null }) {
                 disabled={isLoading || !input.trim()}
                 size="icon"
                 className="bg-teal-500/20 hover:bg-teal-500/40 border border-teal-500/50 rounded-lg"
+                aria-label="Send message"
               >
                 <Send className="w-4 h-4 text-teal-400" />
               </Button>

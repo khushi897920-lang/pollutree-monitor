@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import Chatbot from '@/components/Chatbot';
 import { calculateAQI, getAQICategory } from '@/lib/aqiCalculator';
 import AQITrendChart from '@/components/AQITrendChart';
+import AQIForecastChart from '@/components/AQIForecastChart';
 
 const AQIMap = dynamic(() => import('@/components/AQIMap'), { ssr: false });
 
@@ -21,6 +22,7 @@ export default function CitizenDashboard() {
   const [loading, setLoading] = useState(true);
   const [advisoryLoading, setAdvisoryLoading] = useState(true);
   const [alerts, setAlerts] = useState([]);
+  const [fontSize, setFontSize] = useState('normal');
 
   const fetchData = async () => {
     try {
@@ -32,7 +34,11 @@ export default function CitizenDashboard() {
         setReadings(data.latestByWard);
         setHistoricalReadings(data.readings);
         if (data.latestByWard.length > 0) {
-          setLatestReading(data.latestByWard[0]);
+          const mostPolluted = data.latestByWard.reduce(
+            (max, r) => (r.aqi || 0) > (max.aqi || 0) ? r : max,
+            data.latestByWard[0]
+          );
+          setLatestReading(mostPolluted);
         }
 
         const newAlerts = data.latestByWard
@@ -59,7 +65,14 @@ export default function CitizenDashboard() {
       setAdvisoryLoading(true);
       const response = await fetch('/api/advisory');
       const data = await response.json();
-      if (data.success) setAdvisory(data.advisory);
+      if (data.success && data.advisory) {
+        setAdvisory(data.advisory);
+      } else {
+        setAdvisory(
+          'Air quality data is being collected. ' +
+          'Please check back shortly.'
+        );
+      }
     } catch (error) {
       console.error('Error fetching advisory:', error);
       setAdvisory('Unable to fetch health advisory at this time.');
@@ -71,14 +84,18 @@ export default function CitizenDashboard() {
   useEffect(() => {
     fetchData();
     fetchAdvisory();
-    // Auto-refresh disabled — use the Refresh button instead
+    const interval = setInterval(() => {
+      fetchData();
+      fetchAdvisory();
+    }, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const pm25Val = latestReading?.pm25 ?? latestReading?.pm25_level ?? 0;
   const pm10Val = latestReading?.pm10 ?? latestReading?.pm10_level ?? 0;
   const gasVal = latestReading?.gas_level ?? 0;
-  const aqi = latestReading ? (latestReading.aqi || 0) : 0;
-  const aqiCategory = latestReading ? getAQICategory(aqi) : { category: 'Unknown', color: '#6b7280' };
+  const aqi = latestReading?.aqi ?? null;
+  const aqiCategory = aqi !== null ? getAQICategory(aqi) : { category: 'No Data', color: '#6b7280' };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
@@ -89,21 +106,63 @@ export default function CitizenDashboard() {
               <h1 className="text-2xl font-bold text-neon-cyan tracking-wider drop-shadow-[0_0_8px_rgba(0,255,255,0.6)]">
                 Smart City AQI Monitor
               </h1>
-              <p className="text-sm text-gray-400 mt-1">Real-time Air Quality Dashboard</p>
+              <p className="text-sm text-gray-400 mt-1 flex items-center">
+                <span>Real-time Air Quality Dashboard</span>
+                <span className="text-green-400 animate-pulse ml-2">
+                  ● LIVE
+                </span>
+              </p>
             </div>
-            <Button
-              onClick={() => { fetchData(); fetchAdvisory(); }}
-              variant="outline"
-              className="border-slate-700 hover:bg-slate-800"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
-            </Button>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1 border border-slate-700 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => {
+                    setFontSize('small');
+                    document.documentElement.style.fontSize='14px';
+                  }}
+                  className={`px-2 py-1 text-xs transition-colors
+                  ${fontSize==='small' 
+                    ? 'bg-cyan-600 text-white' 
+                    : 'text-gray-400 hover:bg-slate-700'}`}
+                  aria-label="Decrease font size"
+                >A-</button>
+                <button
+                  onClick={() => {
+                    setFontSize('normal');
+                    document.documentElement.style.fontSize='16px';
+                  }}
+                  className={`px-2 py-1 text-sm transition-colors
+                  ${fontSize==='normal' 
+                    ? 'bg-cyan-600 text-white' 
+                    : 'text-gray-400 hover:bg-slate-700'}`}
+                  aria-label="Normal font size"
+                >A</button>
+                <button
+                  onClick={() => {
+                    setFontSize('large');
+                    document.documentElement.style.fontSize='19px';
+                  }}
+                  className={`px-2 py-1 text-base transition-colors
+                  ${fontSize==='large' 
+                    ? 'bg-cyan-600 text-white' 
+                    : 'text-gray-400 hover:bg-slate-700'}`}
+                  aria-label="Increase font size"
+                >A+</button>
+              </div>
+              <Button
+                onClick={() => { fetchData(); fetchAdvisory(); }}
+                variant="outline"
+                className="border-slate-700 hover:bg-slate-800"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-8">
+      <main id="main-content" className="container mx-auto px-6 py-8">
         {loading ? (
           <div className="flex items-center justify-center h-96">
             <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
@@ -120,10 +179,16 @@ export default function CitizenDashboard() {
 
                   <div className="text-center py-8">
                     <div className="relative inline-block">
-                      <div className="w-40 h-40 rounded-full bg-black/40 flex items-center justify-center border border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.5)]" style={{ boxShadow: `0 0 30px ${aqiCategory.color}40, inset 0 0 20px ${aqiCategory.color}20`, borderColor: aqiCategory.color }}>
+                      <div 
+                        className="w-40 h-40 rounded-full bg-black/40 flex items-center justify-center border border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.5)]" 
+                        style={{ boxShadow: `0 0 30px ${aqiCategory.color}40, inset 0 0 20px ${aqiCategory.color}20`, borderColor: aqiCategory.color }}
+                        role="status"
+                        aria-live="polite"
+                        aria-label={`Current AQI is ${aqi !== null ? aqi : 'unavailable'}`}
+                      >
                         <div className="text-center">
                           <div className="text-5xl font-bold drop-shadow-[0_0_10px_currentColor]" style={{ color: aqiCategory.color }}>
-                            {aqi}
+                            {aqi !== null ? aqi : '--'}
                           </div>
                           <div className="text-xs text-slate-400 mt-1 uppercase tracking-widest">AQI</div>
                         </div>
@@ -139,7 +204,10 @@ export default function CitizenDashboard() {
 
                   {latestReading && (
                     <div className="mt-6 space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-black/30 border border-white/10 rounded-xl hover:bg-white/5 transition-colors">
+                      <div 
+                        className="flex items-center justify-between p-3 bg-black/30 border border-white/10 rounded-xl hover:bg-white/5 transition-colors"
+                        aria-label={`Current PM2.5 level is ${Number(pm25Val).toFixed(1)} micrograms per cubic meter`}
+                      >
                         <div className="flex items-center gap-2">
                           <Wind className="w-4 h-4 text-neon-cyan" />
                           <span className="text-sm text-slate-300">PM2.5</span>
@@ -185,7 +253,7 @@ export default function CitizenDashboard() {
                     <AlertTriangle className="w-4 h-4 text-neon-red drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
                     Pollution Alerts
                   </h2>
-                  <div className="space-y-3 max-h-[280px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20">
+                  <div className="space-y-3 max-h-[280px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20" role="alert">
                     {alerts.length === 0 ? (
                       <div className="text-center py-6">
                         <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2 drop-shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
@@ -234,6 +302,7 @@ export default function CitizenDashboard() {
               <div className="mt-6">
                 <AQITrendChart data={historicalReadings} />
               </div>
+              <AQIForecastChart />
             </div>
           </div>
         )}

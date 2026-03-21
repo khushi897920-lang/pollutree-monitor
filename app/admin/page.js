@@ -25,6 +25,7 @@ import {
 import dynamic from 'next/dynamic';
 import { calculateAQI, getAQICategory } from '@/lib/aqiCalculator';
 import { detectPollutionSource, getPollutionContributions } from '@/lib/pollutionDetector';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 const AQIMap = dynamic(() => import('@/components/AQIMap'), { ssr: false });
 
@@ -75,8 +76,20 @@ export default function AdminDashboard() {
     }
   }, [isLoaded, isSignedIn]);
 
-  const handleMitigation = (wardId, action) => {
-    alert(`✅ Mitigation action "${action}" dispatched to Ward ${wardId}`);
+  const handleMitigation = async (wardId, action) => {
+    try {
+      await fetch('/api/admin/mitigation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          ward_id: wardId, 
+          action_type: action 
+        })
+      });
+      alert(`✅ Mitigation "${action}" dispatched to Ward ${wardId}`);
+    } catch (err) {
+      alert(`❌ Failed to dispatch mitigation`);
+    }
   };
 
   if (!isLoaded) {
@@ -160,7 +173,7 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-4">
+      <main id="main-content" className="container mx-auto px-6 py-4">
         {loading ? (
           <div className="flex items-center justify-center h-96">
             <Loader2 className="w-12 h-12 animate-spin text-purple-500" />
@@ -340,7 +353,7 @@ export default function AdminDashboard() {
                       <AlertTriangle className="w-4 h-4 text-neon-red drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
                       Pollution Alerts
                     </h2>
-                    <div className="space-y-2 max-h-[220px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20">
+                    <div className="space-y-2 max-h-[220px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20" role="alert" aria-live="assertive">
                       {alerts.length === 0 ? (
                         <div className="text-center py-6">
                           <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2 drop-shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
@@ -390,33 +403,57 @@ export default function AdminDashboard() {
                           {aiSource.source}
                         </Badge>
                       </div>
-                      <div className="space-y-2">
-                        {aiContributions.map((src) => (
-                          <div key={src.label}>
-                            <div className="flex items-center justify-between mb-0.5">
-                              <span className="text-[11px] text-slate-300 flex items-center gap-1">
-                                <span>{src.icon}</span>
-                                {src.label}
-                              </span>
-                              <span
-                                className="text-[11px] font-bold"
-                                style={{ color: src.color }}
-                              >
-                                {src.pct}%
-                              </span>
+                      <div className="flex flex-row items-center gap-4">
+                        <div className="space-y-2 flex-1">
+                          {aiContributions.map((src) => (
+                            <div key={src.label}>
+                              <div className="flex items-center justify-between mb-0.5">
+                                <span className="text-[11px] text-slate-300 flex items-center gap-1">
+                                  <span>{src.icon}</span>
+                                  {src.label}
+                                </span>
+                                <span
+                                  className="text-[11px] font-bold"
+                                  style={{ color: src.color }}
+                                >
+                                  {src.pct}%
+                                </span>
+                              </div>
+                              <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                                <div
+                                  className="h-full rounded-full transition-all duration-700"
+                                  style={{
+                                    width: `${src.pct}%`,
+                                    backgroundColor: src.color,
+                                    boxShadow: `0 0 6px ${src.color}80`,
+                                  }}
+                                />
+                              </div>
                             </div>
-                            <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
-                              <div
-                                className="h-full rounded-full transition-all duration-700"
-                                style={{
-                                  width: `${src.pct}%`,
-                                  backgroundColor: src.color,
-                                  boxShadow: `0 0 6px ${src.color}80`,
-                                }}
-                              />
-                            </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
+                        <div>
+                          <PieChart width={200} height={200}>
+                            <Pie
+                              data={aiContributions}
+                              cx={100}
+                              cy={100}
+                              innerRadius={0}
+                              outerRadius={80}
+                              dataKey="pct"
+                            >
+                              {aiContributions.map((entry, index) => (
+                                <Cell 
+                                  key={index} 
+                                  fill={entry.color} 
+                                />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              formatter={(value) => `${value}%`}
+                            />
+                          </PieChart>
+                        </div>
                       </div>
                       <div className="grid grid-cols-3 gap-1 text-xs mt-3 pt-2 border-t border-white/10">
                         <div>
@@ -449,6 +486,7 @@ export default function AdminDashboard() {
                               <Button
                                 onClick={() => handleMitigation(alert.ward_id, 'Water Sprinklers')}
                                 className="w-full bg-blue-600 hover:bg-blue-700 h-8 text-xs"
+                                aria-label={`Deploy Water Sprinklers for ${alert.ward_name}`}
                               >
                                 <Droplets className="w-3 h-3 mr-1" />
                                 Deploy Sprinklers
@@ -456,6 +494,7 @@ export default function AdminDashboard() {
                               <Button
                                 onClick={() => handleMitigation(alert.ward_id, 'Traffic Control')}
                                 className="w-full bg-amber-600 hover:bg-amber-700 h-8 text-xs"
+                                aria-label={`Traffic Control for ${alert.ward_name}`}
                               >
                                 <Wind className="w-3 h-3 mr-1" />
                                 Traffic Control
