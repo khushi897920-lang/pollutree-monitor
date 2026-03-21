@@ -3,7 +3,6 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
-    serverComponentsExternalPackages: ['mongodb'],
     serverActions: {
       allowedOrigins: ['localhost:3000'],
     },

@@ -18,7 +18,7 @@ export async function GET(request) {
     const { data, error } = await supabase
       .from('aqi_readings')
       .select('*')
-      .order('created_at', { ascending: false })
+    order('aqi_score', { ascending: false })
       .limit(1);
 
     if (error) {

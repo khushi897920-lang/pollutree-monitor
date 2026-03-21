@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { calculateAQI } from '@/lib/aqiCalculator';
+
 
 // Delhi wards only — no hardware yet, using simulated local data
 const WARD_NAME_TO_ID = {
@@ -52,6 +54,10 @@ export async function POST(req) {
       }, { status: 400 });
     }
 
+    const computedAqi = aqi !== undefined
+      ? Number(aqi)
+      : calculateAQI(Number(pm25));
+
     const { data, error } = await supabase
       .from('aqi_readings')
       .insert([{
@@ -60,7 +66,7 @@ export async function POST(req) {
         pm25_level: Number(pm25),
         pm10_level: pm10 !== undefined ? Number(pm10) : null,
         gas_level: gas !== undefined ? Number(gas) : null,
-        aqi_score: aqi !== undefined ? Number(aqi) : null,
+        aqi_score: computedAqi,
       }])
       .select();
 
