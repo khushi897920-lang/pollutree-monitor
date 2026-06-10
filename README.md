@@ -1,97 +1,144 @@
-# 🌳 Pollutree Monitor
+<div align="center">
 
-### Reclaiming our right to breathe, one neighborhood at a time. A hyper-local AQI intelligence system for Indian cities.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:064e3b,100:16a34a&height=200&section=header&text=🌳%20Pollutree%20Monitor&fontSize=48&fontColor=ffffff&fontAlignY=38&desc=Ward-Level%20AQI%20Intelligence%20for%20Indian%20Cities&descAlignY=58&descSize=18&descColor=86efac" width="100%"/>
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-brightgreen?style=flat-square&logo=vercel)](https://pollutree-monitor.vercel.app)
-![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
-![Supabase](https://img.shields.io/badge/Supabase-Database-blue?style=flat-square&logo=supabase)
-![Gemini AI](https://img.shields.io/badge/Gemini%20AI-Advisories-orange?style=flat-square&logo=google-gemini)
-![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
-![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)
+<br/>
+
+**India breathes 7× more PM2.5 than the WHO limit — yet nobody can tell you what your *street* is breathing right now.**
+
+*Pollutree changes that.*
+
+<br/>
+
+[![Live Demo](https://img.shields.io/badge/⚡%20Live%20Demo-Vercel-00c853?style=for-the-badge&logo=vercel&logoColor=white)](https://pollutree-monitor.vercel.app)
+&nbsp;
+![Next.js](https://img.shields.io/badge/Next.js%2014-black?style=for-the-badge&logo=next.js)
+&nbsp;
+![Gemini AI](https://img.shields.io/badge/Gemini%202.5%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)
+&nbsp;
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+&nbsp;
+![ESP32](https://img.shields.io/badge/ESP32%20IoT-E7352C?style=for-the-badge&logo=espressif&logoColor=white)
+
+</div>
 
 ---
 
-In India, air pollution is not just a seasonal headline; it's a persistent, structural civic emergency. Yet, city-wide averages obscure the reality—masking toxic, localized hotspots under a blanket of generic municipal AQI scores. **Pollutree Monitor** is built to break through these blind spots. By pairing low-cost, open-source ESP32 IoT hardware with an AI-enriched live dashboard, it democratizes access to ward-level air quality data. Pollutree translates raw dust and gas readings into immediate, Gemini-powered health recommendations and automated source detection, giving citizens and local leaders the data they need to protect their health and demand accountability.
+## 🌫️ The Problem We're Solving
 
-> 🚀 **Live Demo:** [pollutree-monitor.vercel.app](https://pollutree-monitor.vercel.app)
+> *"Delhi AQI: 187 — Moderate."*
 
-> 📸 Screenshots coming soon — PRs with screenshots welcome!
+That number means nothing if your ward is sitting at 340 next to a construction site, while the park three kilometers away pulls the city average down.
+
+**City-wide AQI averages are a lie by omission.** They mask hyperlocal toxic hotspots under deceptively reassuring headlines. Citizens make health decisions — whether to open windows, let kids play outside, go for a run — based on data that doesn't represent *their* air.
+
+Pollutree Monitor was built to fix this.
+
+By deploying low-cost ESP32 IoT sensors at the ward level and fusing that raw hardware data with Gemini AI intelligence, Pollutree delivers **real-time, hyper-local AQI visibility** — down to the street, not just the city.
+
+---
+
+## 📸 Screenshots
+
+> 🌟 **Live at:** [pollutree-monitor.vercel.app](https://pollutree-monitor.vercel.app)
+
+### 🗺️ Citizen Dashboard — Live Heatmap
+![Citizen Dashboard - AQI Heatmap](./screenshots/citizen-dashboard.png)
+*Interactive Leaflet.js heatmap with live color-coded ward markers, real-time AQI scores, and Gemini-powered health advisories.*
+
+### 📊 Trend Analysis & Sensor Breakdown
+![Trend Charts](./screenshots/trend-charts.png)
+*Recharts trendlines mapping historical AQI shifts across wards — identify peak pollution windows at a glance.*
+
+### 🛡️ Admin Control Center
+![Admin Dashboard](./screenshots/admin-dashboard.png)
+*Auth-protected municipal command center: AI-driven pollution source detection, live data grid with microsecond timestamps, and one-click mitigation actions.*
+
+### 🤖 Gemini AI Chatbot
+![AI Chatbot](./screenshots/chatbot.png)
+*Ask: "Is it safe to run in Lodhi Road today?" — Get an instant, AQI-aware, natural language response powered by Gemini 2.5 Flash.*
 
 ---
 
 ## ✨ Features
 
-### 👤 Citizen Dashboard (`/citizen`) — *Democratizing Data*
-* 🌡️ **Live Ward-Level Pulse:** Real-time AQI scores, color-coded by severity, giving you visibility into the exact air your neighborhood is breathing.
-* 🧪 **Granular Sensor Breakdown:** Real-time metrics for PM2.5, PM10, and hazardous gas levels collected straight from local physical monitors.
-* 🗺️ **Interactive Neighborhood Heatmap:** A beautiful, responsive Leaflet.js map dotted with live, color-coded markers for each monitored ward.
-* 🧠 **Gemini-Powered Health Advisories:** Smarter, hyper-local safety recommendations powered by Gemini AI, with a bulletproof rule-based fallback system for when API quotas get tight.
-* 📈 **AQI Trendlines:** Interactive Recharts trendlines mapping historical shifts to help you identify patterns and peak spike times.
-* 🚨 **Active Alert Panel:** Instantly flags wards that breach the critical AQI 100 threshold so communities can stay informed.
-* 💬 **Floating AI Chatbot:** Ask natural language questions like *"Is it safe to go for a run in Lodhi Road?"* or *"Explain what PM2.5 does"* and get immediate answers.
+### 👤 Citizen Dashboard `/citizen`
 
-### 🛡️ Admin Dashboard (`/admin`) — *Municipal Action Center (Auth Protected)*
-* 📊 **City-Wide Control Center:** A consolidated overview tracking active alerts, safest zones, and total active reporting nodes.
-* 📍 **Spatial Tracking:** Admin-exclusive spatial visualizations to monitor sensor coverage.
-* 🔍 **AI-Driven Source Detection:** Algorithmically guesses the most likely pollution source (e.g., construction dust, industrial exhaust, biomass burning, traffic) based on particulate/gas ratio analysis.
-* 📝 **Real-Time Data Table:** A scrollable, live data grid displaying every reading with instant AQI conversion and microsecond timestamps.
-* ⚡ **Mitigation Quick Actions:** Instant administrative buttons to deploy road water sprinklers or trigger traffic diversion systems in critical wards.
+| Feature | What It Does |
+|---|---|
+| 🌡️ **Live Ward Pulse** | Real-time AQI scores, color-coded by severity (Good → Hazardous) per neighborhood |
+| 🧪 **Sensor Breakdown** | PM2.5, PM10, and hazardous gas readings straight from physical ESP32 nodes |
+| 🗺️ **Interactive Heatmap** | Leaflet.js map with live, color-coded ward markers — see exactly which zones are dangerous |
+| 🧠 **Gemini Health Advisories** | Context-aware safety recommendations from Gemini 2.5 Flash, with a bulletproof rule-based fallback |
+| 📈 **AQI Trendlines** | Historical Recharts graphs to spot peak pollution windows and daily patterns |
+| 🚨 **Active Alert Panel** | Instantly flags every ward that breaches the AQI 100 threshold |
+| 💬 **Floating AI Chatbot** | Ask anything: *"Should I let my kids play outside?"* — real answers, not generic advice |
+
+### 🛡️ Admin Dashboard `/admin` — Auth Protected
+
+| Feature | What It Does |
+|---|---|
+| 📊 **City-Wide Control Center** | Live overview: active alerts, safest zones, total reporting sensor nodes |
+| 🔍 **AI Source Detection** | Algorithmically identifies likely pollution source (construction dust, industrial exhaust, biomass burning, traffic) from particulate/gas ratio analysis |
+| 📝 **Real-Time Data Grid** | Scrollable live table with every reading, AQI conversion, and microsecond timestamps |
+| ⚡ **Mitigation Quick Actions** | Deploy road water sprinklers or trigger traffic diversion with one tap |
 
 ---
 
-## 🛠️ Tech Stack & Architecture Choices
+## 🛠️ Tech Stack
 
-| Layer | Technology | Why we chose it |
+| Layer | Technology | Why |
 |---|---|---|
-| **Frontend** | Next.js 14, React 18, Tailwind CSS, shadcn/ui | Blazing fast page loads, clean responsive design, and highly reusable components for a modern look. |
-| **Backend** | Next.js App Router API Routes | Quick, serverless API endpoints to ingest sensor data and serve frontends without managing complex servers. |
-| **Database** | Supabase (PostgreSQL) | Instant PostgreSQL database with RESTful APIs, perfect for continuous time-series sensor ingestion. |
-| **AI** | Google Gemini 2.5 Flash | Lightning-fast token generation to provide real-time, context-aware health advisories and chatbot Q&As. |
-| **Auth** | Clerk (role-based) | Zero-fuss user authentication and role management to securely protect the administrative dashboard. |
-| **Maps** | Leaflet.js + React Leaflet | Open-source, lightweight map components without the heavy page loads and pricing of proprietary map APIs. |
-| **Charts** | Recharts | Declarative, interactive React charts that make historical AQI trendlines clean and readable. |
-| **Deployment** | Vercel | Seamless continuous integration and sub-second cold starts for serverless routes. |
+| **Frontend** | Next.js 14, React 18, Tailwind CSS, shadcn/ui | Blazing page loads, clean responsive design, reusable components |
+| **Backend** | Next.js App Router API Routes | Serverless endpoints — no infrastructure to manage |
+| **Database** | Supabase (PostgreSQL) | Real-time PostgreSQL with RESTful APIs, built for continuous time-series ingestion |
+| **AI** | Google Gemini 2.5 Flash | Sub-second token generation for real-time health advisories and chatbot Q&A |
+| **Auth** | Clerk (role-based) | Secure, zero-fuss user authentication protecting the admin panel |
+| **Maps** | Leaflet.js + React Leaflet | Lightweight, open-source maps — no proprietary API costs |
+| **Charts** | Recharts | Declarative, interactive React charts for clean AQI trendlines |
+| **IoT Hardware** | ESP32 + MQ-135 + PMS5003 | Low-cost, deployable sensor nodes that push live air quality readings every 60 seconds |
+| **Deployment** | Vercel | Seamless CI/CD with sub-second serverless cold starts |
 
 ---
 
-## 🏗️ Architecture Overview
+## 🏗️ System Architecture
 
-The system operates on an automated ingestion and delivery loop, routing physical particulate readings to live web clients and AI advisory layers in seconds:
+The platform operates on a fully automated data pipeline — from physical dust particles hitting a sensor to a citizen seeing their ward's AQI in under 3 seconds:
 
 ```
-          ┌──────────────────────────────────┐
-          │     ESP32 IoT Physical Sensor    │
-          │  (MQ-135 Gas / PMS5003 PM Sensor)│
-          └────────────────┬─────────────────┘
-                           │
-                           │ POST /api/sensor (JSON Payload)
-                           ▼
-          ┌──────────────────────────────────┐
-          │    Next.js /api/sensor Route     │
-          │   (Server-side AQI calculation)  │
-          └────────────────┬─────────────────┘
-                           │
-                           │ Store reading
-                           ▼
-          ┌──────────────────────────────────┐
-          │     Supabase Database (Postgres)  │
-          └──────────┬──────────────────────┬┘
-                     │                      │
-                     │ GET /api/readings    │ Run AI context queries
-                     ▼                      ▼
-          ┌─────────────────────┐   ┌─────────────────────┐
-          │  Citizen & Admin    │   │  Gemini 2.5 Flash   │
-          │  Dashboards (UI)    │◄──┤ (/api/advisory, QnA)│
-          └─────────────────────┘   └─────────────────────┘
+┌──────────────────────────────────────┐
+│       ESP32 IoT Physical Sensor      │
+│  (MQ-135 Gas Sensor / PMS5003 Dust)  │
+└──────────────┬───────────────────────┘
+               │
+               │  POST /api/sensor  (JSON payload every 60s)
+               ▼
+┌──────────────────────────────────────┐
+│      Next.js /api/sensor Route       │
+│   Server-side EPA AQI Calculation    │
+└──────────────┬───────────────────────┘
+               │
+               │  Store reading
+               ▼
+┌──────────────────────────────────────┐
+│      Supabase Database (Postgres)    │
+│     Time-series AQI readings store   │
+└──────────┬───────────────────────────┘
+           │                    │
+           │ GET /api/readings  │  Run AI context queries
+           ▼                    ▼
+┌──────────────────┐   ┌──────────────────────┐
+│  Citizen & Admin │   │  Gemini 2.5 Flash AI │
+│   Dashboards     │◄──│  (/api/advisory, qna)│
+└──────────────────┘   └──────────────────────┘
 ```
 
 ---
 
 ## ⚙️ Local Setup
 
-### Quick Start (TL;DR)
-Get the app running locally in 4 commands:
+### ⚡ Quick Start
+
 ```bash
 git clone https://github.com/yourusername/pollutree-monitor.git
 cd pollutree-monitor
@@ -101,17 +148,10 @@ npm run dev
 
 ---
 
-### Step-by-Step Installation
+### 🔑 Environment Configuration
 
-#### 📦 Clone & Install
-```bash
-git clone https://github.com/yourusername/pollutree-monitor.git
-cd pollutree-monitor
-npm install
-```
+Create `.env.local` in the project root:
 
-#### 🔑 Configure Environment
-Create a `.env.local` file in the project root with the following keys:
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -132,11 +172,16 @@ CLERK_TRUST_HOST=true
 # App
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
-> [!WARNING]
-> Never commit `.env.local` to public repositories. It is already included in `.gitignore`.
 
-#### 🗄️ Initialize Database Schema
-Execute the following SQL queries inside your Supabase SQL Editor to set up the readings table and optimize indexes:
+> [!WARNING]
+> Never commit `.env.local`. It is already included in `.gitignore`.
+
+---
+
+### 🗄️ Database Schema
+
+Run this in your Supabase SQL Editor:
+
 ```sql
 CREATE TABLE aqi_readings (
   id          BIGSERIAL PRIMARY KEY,
@@ -149,27 +194,26 @@ CREATE TABLE aqi_readings (
   aqi_score   NUMERIC
 );
 
+-- Performance indexes for real-time queries
 CREATE INDEX idx_aqi_ward    ON aqi_readings(ward_id);
 CREATE INDEX idx_aqi_created ON aqi_readings(created_at DESC);
 ```
 
-#### 🚀 Spin Up Development Server
-```bash
-npm run dev
-```
+---
 
-Navigate to:
+### 🌐 Routes
+
 | Page | URL |
 |---|---|
-| 🏠 Home | [http://localhost:3000](http://localhost:3000) |
-| 👤 Citizen | [http://localhost:3000/citizen](http://localhost:3000/citizen) |
-| 🛡️ Admin | [http://localhost:3000/admin](http://localhost:3000/admin) |
+| 🏠 Home | `http://localhost:3000` |
+| 👤 Citizen Dashboard | `http://localhost:3000/citizen` |
+| 🛡️ Admin Panel | `http://localhost:3000/admin` |
 
 ---
 
 ## 🔌 ESP32 Hardware Integration
 
-Flash this sketch to your ESP32 to push sensor data to the live dashboard every 60 seconds.
+Flash this sketch to your ESP32 to push live sensor data to the dashboard every 60 seconds:
 
 ```cpp
 #include <WiFi.h>
@@ -180,7 +224,6 @@ const char* ssid      = "YOUR_WIFI_SSID";
 const char* password  = "YOUR_WIFI_PASSWORD";
 const char* serverUrl = "https://your-app.vercel.app/api/sensor";
 
-// Set the ward this sensor belongs to
 const int   WARD_ID   = 1;
 const char* WARD_NAME = "Anand Vihar";
 
@@ -188,7 +231,7 @@ void setup() {
   Serial.begin(115200);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
-  Serial.println("WiFi connected");
+  Serial.println("WiFi connected ✓");
 }
 
 float readPM25()  { return 95.3;  } // Replace with actual sensor read
@@ -215,20 +258,20 @@ void loop() {
     Serial.printf("Sensor POST → HTTP %d\n", code);
     http.end();
   }
-  delay(60000); // Send every 60 seconds
+  delay(60000); // Every 60 seconds
 }
 ```
 
 **Sensors tested with:**
-* MQ-135 (Gas / VOC)
-* PMS5003 / SDS011 (PM2.5 + PM10)
+- MQ-135 (Gas / VOC detection)
+- PMS5003 / SDS011 (PM2.5 + PM10 particulate matter)
 
 > [!TIP]
-> **Don't have hardware?** Use our mock sensor script to simulate data locally:
+> **No hardware?** Simulate sensor data locally:
 > ```bash
 > node sensor-simulator.js
 > ```
-> Or send a one-off mock reading using `curl`:
+> Or fire a one-off test reading:
 > ```bash
 > curl -X POST http://localhost:3000/api/sensor \
 >   -H "Content-Type: application/json" \
@@ -239,8 +282,7 @@ void loop() {
 
 ## 📡 API Reference
 
-### `POST /api/sensor` — Ingest sensor data from hardware
-Send JSON with sensor readings. The API accepts both `pm25` / `pm25_level` and `pm10` / `pm10_level` field names interchangeably.
+### `POST /api/sensor` — Ingest Hardware Data
 
 ```json
 {
@@ -253,49 +295,48 @@ Send JSON with sensor readings. The API accepts both `pm25` / `pm25_level` and `
 }
 ```
 
-**Response (Success):**
 Returns `{ "success": true, "data": { ...inserted_row } }` on success.
 
 > [!NOTE]
-> The API also accepts `ward_name` alone (without `ward_id`) — it will auto-resolve to the correct ward ID.
+> Accepts `ward_name` alone (without `ward_id`) — auto-resolves to the correct ward ID.
 
 ---
 
-### `GET /api/readings?limit=100` — Fetch latest readings
-**Response (Success):**
+### `GET /api/readings?limit=100` — Fetch Latest Readings
+
 ```json
 {
   "success": true,
   "latestByWard": [ ...one entry per ward ],
-  "readings": [ ...all readings ]
+  "readings":     [ ...all readings ]
 }
 ```
-AQI is computed server-side using the EPA PM2.5 formula, ensuring consistent values across the UI.
+
+AQI is computed server-side using the EPA PM2.5 formula for consistent values across all UI clients.
 
 ---
 
 ### `GET /api/advisory` — AI Health Advisory
+
 Returns a natural language health advisory based on the latest AQI reading.
-* Uses Gemini 2.5 Flash when available.
-* Falls back to a rule-based advisory based on the AQI tier if Gemini is rate-limited or unavailable.
-* Results are cached for 10 minutes to prevent excessive API calls.
+
+- Uses **Gemini 2.5 Flash** when available
+- Falls back to a **rule-based advisory** if Gemini is rate-limited or unavailable
+- Results cached for **10 minutes** to prevent excessive API calls
 
 ---
 
-### `POST /api/qna` — Chatbot
-**Request:**
+### `POST /api/qna` — AI Chatbot
+
 ```json
 { "question": "Is it safe to go for a run today?" }
 ```
-**Response:**
-Returns `{ "success": true, "answer": "..." }`.
-If Gemini is unavailable, returns a rule-based answer based on current AQI data.
+
+Returns `{ "success": true, "answer": "..." }`. Falls back to rule-based AQI-tier answer if Gemini is unavailable.
 
 ---
 
-## 📌 Ward ID Mapping
-
-Only wards with these IDs will appear on the dashboard:
+## 📌 Ward Mapping
 
 | ID | Ward Name |
 |---|---|
@@ -305,8 +346,7 @@ Only wards with these IDs will appear on the dashboard:
 | 4 | Dwarka Sector 8 |
 | 5 | R.K. Puram |
 
-> [!NOTE]
-> To add new wards, update the `WARD_NAME_TO_ID` map in `app/api/sensor/route.js` and `wardMapping` in `app/api/readings/route.js`.
+> To add wards, update `WARD_NAME_TO_ID` in `app/api/sensor/route.js` and `wardMapping` in `app/api/readings/route.js`.
 
 ---
 
@@ -314,11 +354,11 @@ Only wards with these IDs will appear on the dashboard:
 
 | Range | Category | Color |
 |---|---|---|
-| 0–50 | Good | 🟢 Green |
-| 51–100 | Moderate | 🟡 Yellow |
-| 101–150 | Unhealthy for Sensitive Groups | 🟠 Orange |
-| 151–200 | Unhealthy | 🔴 Red |
-| 201–300 | Very Unhealthy | 🟣 Purple |
+| 0 – 50 | Good | 🟢 Green |
+| 51 – 100 | Moderate | 🟡 Yellow |
+| 101 – 150 | Unhealthy for Sensitive Groups | 🟠 Orange |
+| 151 – 200 | Unhealthy | 🔴 Red |
+| 201 – 300 | Very Unhealthy | 🟣 Purple |
 | 300+ | Hazardous | 🟤 Maroon |
 
 ---
@@ -329,33 +369,33 @@ Only wards with these IDs will appear on the dashboard:
 pollutree-monitor/
 ├── app/
 │   ├── api/
-│   │   ├── sensor/         # POST — hardware data ingestion
-│   │   ├── readings/       # GET  — fetch & transform AQI data
-│   │   ├── advisory/       # GET  — AI health advisory (cached 10 min)
-│   │   └── qna/            # POST — chatbot Q&A
-│   ├── citizen/            # Citizen-facing dashboard
-│   ├── admin/              # Admin control center (Clerk-protected)
-│   └── page.js             # Landing / home page
+│   │   ├── sensor/          # POST — hardware data ingestion + AQI calculation
+│   │   ├── readings/        # GET  — fetch & transform readings per ward
+│   │   ├── advisory/        # GET  — Gemini health advisory (cached 10 min)
+│   │   └── qna/             # POST — chatbot Q&A endpoint
+│   ├── citizen/             # Citizen-facing AQI dashboard
+│   ├── admin/               # Admin control center (Clerk auth protected)
+│   └── page.js              # Landing / home page
 ├── components/
-│   ├── AQIMap.jsx          # Leaflet map with ward markers
-│   ├── AQITrendChart.jsx   # Recharts trend line
-│   └── Chatbot.jsx         # Floating chat widget
+│   ├── AQIMap.jsx           # Leaflet heatmap with live ward markers
+│   ├── AQITrendChart.jsx    # Recharts historical trendlines
+│   └── Chatbot.jsx          # Floating Gemini chatbot widget
 ├── lib/
-│   ├── supabase.js         # Supabase client
-│   ├── gemini.js           # Gemini AI + fallback logic
-│   ├── aqiCalculator.js    # EPA AQI formula + color scale
-│   └── pollutionDetector.js# AI-based source detection logic
-└── middleware.js            # Clerk auth — protects /admin
+│   ├── supabase.js          # Supabase client config
+│   ├── gemini.js            # Gemini AI integration + rule-based fallback
+│   ├── aqiCalculator.js     # EPA AQI formula + color scale logic
+│   └── pollutionDetector.js # AI-based source detection algorithm
+└── middleware.js             # Clerk auth — guards /admin routes
 ```
 
 ---
 
-## 📦 Deployment (Vercel)
+## 🚀 Deployment
 
-1. Push code to GitHub.
-2. Import repo at [vercel.com](https://vercel.com).
-3. Add all environment variables in **Settings → Environment Variables**.
-4. Deploy — Vercel auto-redeploys on every push to `main`.
+1. Push code to GitHub
+2. Import repo at [vercel.com](https://vercel.com)
+3. Add all environment variables under **Settings → Environment Variables**
+4. Deploy — Vercel auto-redeploys on every push to `main`
 
 ---
 
@@ -363,84 +403,40 @@ pollutree-monitor/
 
 | Issue | Fix |
 |---|---|
-| Map not loading | AQIMap uses `dynamic(..., { ssr: false })` — verify this is in place |
-| Advisory always shows fallback text | Gemini free tier quota exhausted — resets per minute. Check [aistudio.google.com](https://aistudio.google.com) |
-| Sensor POST returns 400 | `ward_id` not in range 1–5, or `pm25` field missing |
-| Admin redirects to sign-in | Clerk keys not set or `CLERK_TRUST_HOST=true` missing in env vars |
-| "Audit Ward" appears in readings | Old test data in Supabase with correct ward_id but wrong name — safe to delete from Supabase table |
+| Map not loading | `AQIMap` uses `dynamic(..., { ssr: false })` — verify this wrapper is in place |
+| Advisory always shows fallback | Gemini free-tier quota exhausted — resets per minute. Check [aistudio.google.com](https://aistudio.google.com) |
+| Sensor POST returns 400 | `ward_id` not in range 1–5, or `pm25` field missing from payload |
+| Admin redirects to sign-in | Clerk keys not set or `CLERK_TRUST_HOST=true` missing in `.env.local` |
+| "Audit Ward" in readings | Old test data in Supabase with mismatched ward name — safe to delete from the table |
 
 ---
 
-## 🤝 Contributing to Pollutree Monitor
+## 🗺️ Roadmap
 
-We welcome contributors of all skill levels — whether you fix a typo or build a full feature. Let's build a healthier, more transparent civic ecosystem together.
-
-### 🌟 Good First Issues
-If you are looking to get your feet wet, try starting with these:
-* 🏙️ **Add more Indian cities/wards** to the ward mapping in `app/api/sensor/route.js` and `app/api/readings/route.js`.
-* 📱 **Improve mobile responsiveness** of the citizen dashboard (responsive maps and chart containers).
-* 🧪 **Write unit tests** for `aqiCalculator.js` to ensure the EPA AQI formula works flawlessly under various inputs.
-* 📦 **Add PWA support** (manifest + service worker setup) to allow installing the dashboard on mobile.
-* 🗣️ **Translate UI strings to Hindi** (or other regional Indian languages) to make data accessible to local residents.
-* 🌙 **Add a Dark Mode toggle** using Tailwind theme classes for night-time reading.
-
-### 🚀 Intermediate Issues
-Ready for a slightly larger challenge?
-* 📅 **Add historical AQI trend comparison** (e.g. week-over-week or month-over-month graphs).
-* 🔔 **Build a ward-level alert notification system** to send automated emails or SMS warnings using Resend or Twilio.
-* 📊 **Add export to CSV** in the admin readings table to help researchers download historical records.
-
-### 🛠️ How to Contribute
-1. **Fork the Repository:** Click the 'Fork' button at the top right of this page.
-2. **Create a Branch:**
-   ```bash
-   git checkout -b feat/your-feature-name
-   ```
-3. **Commit with Conventions:** Make your changes, following conventional commits:
-   ```bash
-   git commit -m "feat: add dark mode toggle"
-   ```
-4. **Push & Open a PR:** Push changes to your fork and submit a Pull Request against our `main` branch.
-5. **PR Template:** Fill out the PR template detail sheets completely.
-
-### 📋 Pull Request Guidelines
-* Keep pull requests small, clean, and highly focused on a single issue.
-* Always add before/after screenshots or screen recordings for UI changes.
-* **Do not** commit `.env.local` or any API keys.
-* Respect existing codebase formatting (ESLint + Prettier).
-
-### 🤝 Code of Conduct
-Be kind, welcoming, and constructive. We are building this for public good. Harassment of any kind, dismissive behavior, or toxic comments will not be tolerated. Let's make breathing easier for everyone, together!
-
-### 🏆 Recognition
-All contributors will be credited in the README Contributors section. We appreciate your brainpower!
+```
+Phase 1 ✅  Real-time AQI · Gemini Advisories · ESP32 Integration · Admin Mitigation Center
+Phase 2 🔄  Mobile App (React Native/Expo) · Historical Analytics · SMS/Email Alerts
+Phase 3 📋  Public OpenAPI · Regional Language Support (Hindi + more) · National Ward Coverage
+```
 
 ---
 
-## 🌍 Roadmap
+## 👩💻 Built By
 
-- [x] **Phase 1 (Current):** Real-time AQI tracking, Gemini-powered health advisories, physical ESP32 sensor integration, and admin mitigation center ✅
-- [ ] **Phase 2 (In Progress):** Mobile app (React Native / Expo), historical analytics charts, and SMS alerts 🔄
-- [ ] **Phase 3 (Planned):** Public OpenAPI for third-party integrations, regional language translations, and wider national ward coverage 📋
+<div align="center">
 
----
+**Khushi** — Full Stack Developer & Civic Tech Builder
 
-## 👥 Contributors
+*Pollutree Monitor was built because clean air is not a luxury — it's a right.*
 
-Thanks to these wonderful people:
-
-<!-- Add your name here via a PR! -->
-
-Built with ❤️ by Khushi and open-source contributors.
+</div>
 
 ---
 
-## 📄 License
+<div align="center">
 
-This project is licensed under the [MIT License](LICENSE).
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:16a34a,50:064e3b,100:0d1117&height=120&section=footer" width="100%"/>
 
----
+**Made for India 🇮🇳 · Every ward deserves to know its air.**
 
-<p align="center">
-  Made for India 🇮🇳 · Built at India Innovates 2026 · Powered by open source
-</p>
+</div>
